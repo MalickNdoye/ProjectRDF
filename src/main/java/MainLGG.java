@@ -31,8 +31,19 @@ public class MainLGG {
         }
     }
 
+    //EXECUTION:
+    //java -jar MainLGG [OPTION] pathToFile1 pathToFile2 pathToInfoFile pathToOutputDirectory pathToDictionary
+    private static void parsingInput(String args[],LggMode mode){
+        if (args.length!=4){
+            System.out.println(args.length);
+        }else{
+            System.out.println("ERROR "+mode);
+        }
+    }
 
     public static void main(String[] args) {
+        LggMode mode = LggMode.DEFAULT ;
+        parsingInput(args,mode);
 
 
     }
