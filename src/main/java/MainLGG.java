@@ -1,8 +1,6 @@
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 
-import javax.xml.bind.annotation.XmlType;
-
 public class MainLGG {
     private Model rdfGraph1 ;
     private Model rdfGraph2 ;
@@ -14,7 +12,7 @@ public class MainLGG {
         mode = LggMode.DEFAULT ;
     }
 
-    private MainLGG(String pathGraph1,String pathGraph2,LggMode mode){
+    private MainLGG(String pathGraph1, String pathGraph2, LggMode mode){
         rdfGraph1 = ModelFactory.createDefaultModel() ;
         rdfGraph2 = ModelFactory.createDefaultModel() ;
         switch (mode){
@@ -33,7 +31,7 @@ public class MainLGG {
 
     //EXECUTION:
     //java -jar MainLGG [OPTION] pathToFile1 pathToFile2 pathToInfoFile pathToOutputDirectory pathToDictionary
-    private static void parsingInput(String args[],LggMode mode){
+    private static void parsingInput(String args[], LggMode mode){
         if (args.length!=4){
             System.out.println(args.length);
         }else{
