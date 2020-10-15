@@ -3,10 +3,11 @@ package rdfio;
 import org.apache.jena.rdf.model.Model;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public interface RDFFileInputMethod {
     //LOADING METHOD
-    public Model load(final String filePath, final ArrayList<String> vars);
+    public Map<String, String> load();
 
     //SAVING METHOD
     public void save(final Model model);
