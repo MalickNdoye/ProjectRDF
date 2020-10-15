@@ -1,16 +1,11 @@
 package rdf;
 
-import org.apache.jena.rdf.model.Model;
 import rdfio.CSVFileIO;
-import rdfio.RDFGraphIO;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class DictionaryNode {
-    private Map<String,String> dictionaryBN ;
+    private final Map<String,String> dictionaryBN ;
     /*
     private Map<String, String> prefixs;
     private Map<String, String> blanknodes;

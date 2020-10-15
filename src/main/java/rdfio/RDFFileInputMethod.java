@@ -7,8 +7,8 @@ import java.util.Map;
 
 public interface RDFFileInputMethod {
     //LOADING METHOD
-    public Map<String, String> load();
+    Map<String, String> load();
 
     //SAVING METHOD
-    public void save(final Model model);
+    void save(final Model model);
 }

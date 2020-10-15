@@ -10,7 +10,6 @@ import java.util.Map;
 public abstract class RDFFileIO implements RDFFileInputMethod {
     protected String filepath ;
     //protected InputStream inputStream ;
-    protected Map<String, String> prefixs;
 
     protected RDFFileIO(){
         this.filepath = "UNKOWN FILE" ;
