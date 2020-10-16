@@ -16,16 +16,12 @@ public class CSVFileIO extends RDFFileIO {
         super(filepath);
     }
 
-    public Model load(String filePath, ArrayList<String> vars) {
-        return null;
-    }
-
-    public void save(){
+    private void save(){
         DictionaryNode dictionaryBN = DictionaryNode.getInstance();
         PrintWriter writerDic = null;
         Set<String> listKeys = null;
         try {
-            writerDic = new PrintWriter(new FileWriter(dictionaryBN.getDictionaryPath()));
+            writerDic = new PrintWriter(new FileWriter(filepath));
             listKeys = dictionaryBN.keySet();
             for (String key : listKeys) {
                 writerDic.write(key + "; ;" + dictionaryBN.get(key));
@@ -37,14 +33,19 @@ public class CSVFileIO extends RDFFileIO {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
+
+    public void save(String filePath){
+        this.filepath = filePath;
+        this.save();
+    }
+
+
 
     public Map<String, String> load(){
         if (!checkFile(filepath)){
             return null ;
         }
-
         try {
             InputStream ips = new FileInputStream(this.filepath);
             InputStreamReader ipsr = new InputStreamReader(ips);
@@ -62,8 +63,5 @@ public class CSVFileIO extends RDFFileIO {
             e.printStackTrace();
         }
         return null;
-    }
-    public void save(Model model) {
-
     }
 }

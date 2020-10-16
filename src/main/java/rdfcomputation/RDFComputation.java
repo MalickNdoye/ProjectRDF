@@ -1,13 +1,9 @@
 package rdfcomputation;
 
 import org.apache.jena.rdf.model.*;
-import org.apache.thrift.TProcessor;
 import rdf.DictionaryNode;
 
-import java.io.*;
 import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.Set;
 
 public class RDFComputation {
     //RDF Graphs
@@ -31,10 +27,9 @@ public class RDFComputation {
         vars2 = new ArrayList<String>();
     }
 
-    public Model ProductGraph(String dictionaryname) throws IOException {
-        PrintWriter writerDic ;
+    public Model ProductGraph(String dictionaryname) {
         Model resultProd = ModelFactory.createDefaultModel();
-        String varstmt2 = "";
+        String varstmt2;
         DictionaryNode dictionaryBN = DictionaryNode.getInstance(dictionaryname);
         int ctre = dictionaryBN.size() + 1;
         StmtIterator i = query1.listStatements();
@@ -43,34 +38,34 @@ public class RDFComputation {
             StmtIterator j = query2.listStatements();
             while (j.hasNext()) {
                 Statement stmt2 = j.nextStatement();
-                if (stmt1.getPredicate().equals((Object)stmt2.getPredicate())) {
-                    if (stmt1.getSubject().equals((Object)stmt2.getSubject()) && !this.isVars(stmt1.getSubject().toString())) {
-                        if (stmt1.getObject().equals(stmt2.getObject()) && !this.isVars(stmt1.getObject().toString())) {
+                if (stmt1.getPredicate().equals(stmt2.getPredicate())) {
+                    if (stmt1.getSubject().equals(stmt2.getSubject()) && this.isVars(stmt1.getSubject().toString())) {
+                        if (stmt1.getObject().equals(stmt2.getObject()) && this.isVars(stmt1.getObject().toString())) {
                             resultProd.add(stmt1);
                         }
                         else {
-                            if (!dictionaryBN.containsKey(stmt1.getObject().toString())) {
-                                dictionaryBN.put(stmt1.getObject().toString(), new StringBuilder().append(ctre).toString());
+                            if (dictionaryBN.containsKey(stmt1.getObject().toString())) {
+                                dictionaryBN.put(stmt1.getObject().toString(), String.valueOf(ctre));
                                 ++ctre;
                             }
-                            if (!dictionaryBN.containsKey(stmt2.getObject().toString())) {
-                                dictionaryBN.put(stmt2.getObject().toString(), new StringBuilder().append(ctre).toString());
+                            if (dictionaryBN.containsKey(stmt2.getObject().toString())) {
+                                dictionaryBN.put(stmt2.getObject().toString(), String.valueOf(ctre));
                                 ++ctre;
                             }
                             String varstmt3 = dictionaryBN.get(stmt1.getObject().toString());
                             varstmt2 = dictionaryBN.get(stmt2.getObject().toString());
                             String var1 = "v__" + varstmt3 + "__" + varstmt2;
                             Resource rs = resultProd.createResource(var1);
-                            resultProd.add(stmt1.getSubject(), stmt1.getPredicate(), (RDFNode)rs);
+                            resultProd.add(stmt1.getSubject(), stmt1.getPredicate(), rs);
                         }
                     }
-                    else if (stmt1.getObject().equals(stmt2.getObject()) && !this.isVars(stmt1.getObject().toString())) {
-                        if (!dictionaryBN.containsKey(stmt1.getSubject().toString())) {
-                            dictionaryBN.put(stmt1.getSubject().toString(), new StringBuilder().append(ctre).toString());
+                    else if (stmt1.getObject().equals(stmt2.getObject()) && this.isVars(stmt1.getObject().toString())) {
+                        if (dictionaryBN.containsKey(stmt1.getSubject().toString())) {
+                            dictionaryBN.put(stmt1.getSubject().toString(), String.valueOf(ctre));
                             ++ctre;
                         }
-                        if (!dictionaryBN.containsKey(stmt2.getSubject().toString())) {
-                            dictionaryBN.put(stmt2.getSubject().toString(), new StringBuilder().append(ctre).toString());
+                        if (dictionaryBN.containsKey(stmt2.getSubject().toString())) {
+                            dictionaryBN.put(stmt2.getSubject().toString(), String.valueOf(ctre));
                             ++ctre;
                         }
                         String varstmt3 = dictionaryBN.get(stmt1.getSubject().toString());
@@ -80,23 +75,23 @@ public class RDFComputation {
                         resultProd.add(rs, stmt1.getPredicate(), stmt1.getObject());
                     }
                     else {
-                        if (!dictionaryBN.containsKey(stmt1.getSubject().toString())) {
-                            dictionaryBN.put(stmt1.getSubject().toString(), new StringBuilder().append(ctre).toString());
+                        if (dictionaryBN.containsKey(stmt1.getSubject().toString())) {
+                            dictionaryBN.put(stmt1.getSubject().toString(), String.valueOf(ctre));
                             ++ctre;
                         }
-                        if (!dictionaryBN.containsKey(stmt2.getSubject().toString())) {
-                            dictionaryBN.put(stmt2.getSubject().toString(), new StringBuilder().append(ctre).toString());
+                        if (dictionaryBN.containsKey(stmt2.getSubject().toString())) {
+                            dictionaryBN.put(stmt2.getSubject().toString(), String.valueOf(ctre));
                             ++ctre;
                         }
                         String varstmt3 = dictionaryBN.get(stmt1.getSubject().toString());
                         varstmt2 = dictionaryBN.get(stmt2.getSubject().toString());
                         String var1 = "v__" + varstmt3 + "__" + varstmt2;
-                        if (!dictionaryBN.containsKey(stmt1.getObject().toString())) {
-                            dictionaryBN.put(stmt1.getObject().toString(), new StringBuilder().append(ctre).toString());
+                        if (dictionaryBN.containsKey(stmt1.getObject().toString())) {
+                            dictionaryBN.put(stmt1.getObject().toString(), String.valueOf(ctre));
                             ++ctre;
                         }
-                        if (!dictionaryBN.containsKey(stmt2.getObject().toString())) {
-                            dictionaryBN.put(stmt2.getObject().toString(), new StringBuilder().append(ctre).toString());
+                        if (dictionaryBN.containsKey(stmt2.getObject().toString())) {
+                            dictionaryBN.put(stmt2.getObject().toString(), String.valueOf(ctre));
                             ++ctre;
                         }
                         varstmt3 = dictionaryBN.get(stmt1.getObject().toString());
@@ -104,7 +99,7 @@ public class RDFComputation {
                         String var2 = "v__" + varstmt3 + "__" + varstmt2;
                         Resource rs2 = resultProd.createResource(var1);
                         Resource rs3 = resultProd.createResource(var2);
-                        resultProd.add(rs2, stmt1.getPredicate(), (RDFNode)rs3);
+                        resultProd.add(rs2, stmt1.getPredicate(), rs3);
                     }
                 }
             }
@@ -114,16 +109,21 @@ public class RDFComputation {
     }
 
     public boolean isVars(String s) {
-        return s.substring(0, 1).equals("y") || s.substring(0, 1).equals("?");
+        return s.charAt(0) != 'y' && s.charAt(0) != '?';
     }
 
-    public Model getQuery1() {
-        return query1;
+    public ArrayList<String> getVars2() {
+        return vars2;
     }
 
+    public ArrayList<String> getVars1() {
+        return vars1;
+    }
+
+    /*
     public void setQuery1(Model query1) {
         this.query1 = query1;
-    }
+    }*
 
     public Model getQuery2() {
         return query2;
@@ -133,19 +133,12 @@ public class RDFComputation {
         this.query2 = query2;
     }
 
-    public ArrayList<String> getVars1() {
-        return vars1;
-    }
-
     public void setVars1(ArrayList<String> vars1) {
         this.vars1 = vars1;
-    }
-
-    public ArrayList<String> getVars2() {
-        return vars2;
     }
 
     public void setVars2(ArrayList<String> vars2) {
         this.vars2 = vars2;
     }
+    */
 }

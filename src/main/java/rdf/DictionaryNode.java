@@ -26,7 +26,7 @@ public class DictionaryNode {
     }
 
     public boolean containsKey(String key) {
-        return dictionaryBN.containsKey(key);
+        return !dictionaryBN.containsKey(key);
     }
 
     public void put(String key, String value) {
@@ -47,7 +47,7 @@ public class DictionaryNode {
 
     public void save() {
         CSVFileIO csvFileIO = new CSVFileIO();
-        csvFileIO.save();
+        csvFileIO.save(this.getDictionaryPath());
     }
 
     /** Holder */

@@ -10,5 +10,5 @@ public interface RDFFileInputMethod {
     Map<String, String> load();
 
     //SAVING METHOD
-    void save(final Model model);
+    void save(String filepath);
 }

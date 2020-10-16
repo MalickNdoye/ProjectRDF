@@ -23,10 +23,6 @@ public abstract class RDFFileIO implements RDFFileInputMethod {
         return null;
     }
 
-    public void save(Model model) {
-
-    }
-
     public Boolean checkFile(String filepath){
         File file = new File(filepath);
         return file.exists() && file.isFile() && !file.isDirectory();

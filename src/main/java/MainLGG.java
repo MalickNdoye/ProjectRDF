@@ -10,12 +10,11 @@ import java.io.*;
 public class MainLGG {
     private final Model rdfGraph1 ;
     private final Model rdfGraph2 ;
-    private LggMode mode ;
 
     private MainLGG(){
         rdfGraph1 = ModelFactory.createDefaultModel() ;
         rdfGraph2 = ModelFactory.createDefaultModel() ;
-        mode = LggMode.DEFAULT ;
+        LggMode mode = LggMode.DEFAULT;
     }
 
     private MainLGG(String pathGraph1, String pathGraph2, LggMode mode){
@@ -55,7 +54,7 @@ public class MainLGG {
 
     public static void main(String[] args) {
         LggMode mode = LggMode.DEFAULT ;
-        if (parsingInput(args,mode)==false){
+        if (!parsingInput(args, mode)){
             return;
         }
         // calcul du LGG qui fonctionne
