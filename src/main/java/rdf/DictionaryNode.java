@@ -7,7 +7,7 @@ import java.util.Set;
 
 public class DictionaryNode {
     private static String dictionaryPath = "unkown";
-    private final Map<String,String> dictionaryBN ;
+    private final Map<String,Integer> dictionaryBN ;
     /*
     private Map<String, String> prefixs;
     private Map<String, String> blanknodes;
@@ -29,11 +29,11 @@ public class DictionaryNode {
         return !dictionaryBN.containsKey(key);
     }
 
-    public void put(String key, String value) {
+    public void put(String key, Integer value) {
         dictionaryBN.put(key,value);
     }
 
-    public String get(String toString) {
+    public Integer get(String toString) {
         return dictionaryBN.get(toString);
     }
 

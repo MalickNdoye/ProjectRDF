@@ -19,7 +19,7 @@ public abstract class RDFFileIO implements RDFFileInputMethod {
         this.filepath = filepath ;
     }
 
-    public Map<String, String> load() {
+    public Map<String, Integer> load() {
         return null;
     }
 

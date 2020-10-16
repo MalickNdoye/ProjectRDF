@@ -41,7 +41,7 @@ public class CSVFileIO extends RDFFileIO {
     }
 
 
-
+    /*
     public Map<String, String> load(){
         if (!checkFile(filepath)){
             return null ;
@@ -56,6 +56,29 @@ public class CSVFileIO extends RDFFileIO {
                 final String[] splt = line.split("; ;");
                 if (splt.length == 2) {
                     dictionaryBN.put(splt[0], splt[1]);
+                }
+            }
+            return dictionaryBN ;
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+        return null;
+    }*/
+
+    public Map<String, Integer> load(){
+        if (!checkFile(filepath)){
+            return null ;
+        }
+        try {
+            InputStream ips = new FileInputStream(this.filepath);
+            InputStreamReader ipsr = new InputStreamReader(ips);
+            BufferedReader br = new BufferedReader(ipsr);
+            Map<String,Integer> dictionaryBN = new HashMap<String,Integer>() ;
+            String line = "";
+            while ((line = br.readLine()) != null) {
+                final String[] splt = line.split("; ;");
+                if (splt.length == 2) {
+                    dictionaryBN.put(splt[0], Integer.parseInt(splt[1]));
                 }
             }
             return dictionaryBN ;

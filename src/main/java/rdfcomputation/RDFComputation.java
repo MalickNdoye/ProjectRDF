@@ -29,7 +29,7 @@ public class RDFComputation {
 
     public Model ProductGraph(String dictionaryname) {
         Model resultProd = ModelFactory.createDefaultModel();
-        String varstmt2;
+        int varstmt2;
         DictionaryNode dictionaryBN = DictionaryNode.getInstance(dictionaryname);
         int ctre = dictionaryBN.size() + 1;
         StmtIterator i = query1.listStatements();
@@ -45,58 +45,58 @@ public class RDFComputation {
                         }
                         else {
                             if (dictionaryBN.containsKey(stmt1.getObject().toString())) {
-                                dictionaryBN.put(stmt1.getObject().toString(), String.valueOf(ctre));
+                                dictionaryBN.put(stmt1.getObject().toString(), ctre);
                                 ++ctre;
                             }
                             if (dictionaryBN.containsKey(stmt2.getObject().toString())) {
-                                dictionaryBN.put(stmt2.getObject().toString(), String.valueOf(ctre));
+                                dictionaryBN.put(stmt2.getObject().toString(), ctre);
                                 ++ctre;
                             }
-                            String varstmt3 = dictionaryBN.get(stmt1.getObject().toString());
+                            int varstmt1 = dictionaryBN.get(stmt1.getObject().toString());
                             varstmt2 = dictionaryBN.get(stmt2.getObject().toString());
-                            String var1 = "v__" + varstmt3 + "__" + varstmt2;
+                            String var1 = "v__" + varstmt1 + "__" + varstmt2;
                             Resource rs = resultProd.createResource(var1);
                             resultProd.add(stmt1.getSubject(), stmt1.getPredicate(), rs);
                         }
                     }
                     else if (stmt1.getObject().equals(stmt2.getObject()) && this.isVars(stmt1.getObject().toString())) {
                         if (dictionaryBN.containsKey(stmt1.getSubject().toString())) {
-                            dictionaryBN.put(stmt1.getSubject().toString(), String.valueOf(ctre));
+                            dictionaryBN.put(stmt1.getSubject().toString(), ctre);
                             ++ctre;
                         }
                         if (dictionaryBN.containsKey(stmt2.getSubject().toString())) {
-                            dictionaryBN.put(stmt2.getSubject().toString(), String.valueOf(ctre));
+                            dictionaryBN.put(stmt2.getSubject().toString(), ctre);
                             ++ctre;
                         }
-                        String varstmt3 = dictionaryBN.get(stmt1.getSubject().toString());
+                        int varstmt1 = dictionaryBN.get(stmt1.getSubject().toString());
                         varstmt2 = dictionaryBN.get(stmt2.getSubject().toString());
-                        String var1 = "v__" + varstmt3 + "__" + varstmt2;
+                        String var1 = "v__" + varstmt1 + "__" + varstmt2;
                         Resource rs = resultProd.createResource(var1);
                         resultProd.add(rs, stmt1.getPredicate(), stmt1.getObject());
                     }
                     else {
                         if (dictionaryBN.containsKey(stmt1.getSubject().toString())) {
-                            dictionaryBN.put(stmt1.getSubject().toString(), String.valueOf(ctre));
+                            dictionaryBN.put(stmt1.getSubject().toString(), ctre);
                             ++ctre;
                         }
                         if (dictionaryBN.containsKey(stmt2.getSubject().toString())) {
-                            dictionaryBN.put(stmt2.getSubject().toString(), String.valueOf(ctre));
+                            dictionaryBN.put(stmt2.getSubject().toString(), ctre);
                             ++ctre;
                         }
-                        String varstmt3 = dictionaryBN.get(stmt1.getSubject().toString());
+                        int varstmt1 = dictionaryBN.get(stmt1.getSubject().toString());
                         varstmt2 = dictionaryBN.get(stmt2.getSubject().toString());
-                        String var1 = "v__" + varstmt3 + "__" + varstmt2;
+                        String var1 = "v__" + varstmt1 + "__" + varstmt2;
                         if (dictionaryBN.containsKey(stmt1.getObject().toString())) {
-                            dictionaryBN.put(stmt1.getObject().toString(), String.valueOf(ctre));
+                            dictionaryBN.put(stmt1.getObject().toString(), ctre);
                             ++ctre;
                         }
                         if (dictionaryBN.containsKey(stmt2.getObject().toString())) {
-                            dictionaryBN.put(stmt2.getObject().toString(), String.valueOf(ctre));
+                            dictionaryBN.put(stmt2.getObject().toString(), ctre);
                             ++ctre;
                         }
-                        varstmt3 = dictionaryBN.get(stmt1.getObject().toString());
+                        varstmt1 = dictionaryBN.get(stmt1.getObject().toString());
                         varstmt2 = dictionaryBN.get(stmt2.getObject().toString());
-                        String var2 = "v__" + varstmt3 + "__" + varstmt2;
+                        String var2 = "v__" + varstmt1 + "__" + varstmt2;
                         Resource rs2 = resultProd.createResource(var1);
                         Resource rs3 = resultProd.createResource(var2);
                         resultProd.add(rs2, stmt1.getPredicate(), rs3);

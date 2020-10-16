@@ -7,7 +7,7 @@ import java.util.Map;
 
 public interface RDFFileInputMethod {
     //LOADING METHOD
-    Map<String, String> load();
+    Map<String, Integer> load();
 
     //SAVING METHOD
     void save(String filepath);
