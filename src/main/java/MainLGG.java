@@ -80,7 +80,8 @@ public class MainLGG {
                 DefaultParameter.graphPath1 = remainder[0];
                 DefaultParameter.graphPath1 = remainder[1];
             }else{
-                System.err.println("ARGUMENT ERROR");
+                String reason = remainder.length<2 ? "too few arguments" : "too much arguments" ;
+                System.err.println("ARGUMENT ERROR : "+reason);
                 formatter.printHelp("CLIsample", DefaultParameter.header, options, DefaultParameter.footer, true);
                 mode = LggMode.INPUT_ERROR ;
                 return false ;
@@ -106,9 +107,6 @@ public class MainLGG {
         Model graph2 = (new RDFModelFactory(DefaultParameter.graphPath1)).read();
         LggGraphs lggGraphs = new LggGraphs(graph1, graph2);
         LggQueries lggQueries = new LggQueries(graph1,graph2);
-
-        
-
 
 
         if (lggGraphs.getVars1().size() == lggGraphs.getVars2().size()) {
