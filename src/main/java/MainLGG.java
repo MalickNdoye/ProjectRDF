@@ -3,6 +3,7 @@ import org.apache.jena.rdf.model.ModelFactory;
 import rdf.RDFModelFactory;
 import rdfcomputation.LggGraphs;
 import rdfcomputation.LggQueries;
+import tools.LggMode;
 
 import java.io.*;
 
@@ -71,6 +72,7 @@ public class MainLGG {
         Model graph2 = rdfModelFactory.read(graph2Adr);
         LggGraphs lggGraphs = new LggGraphs(graph1, graph2);
         LggQueries lggQueries = new LggQueries(graph1,graph2);
+
 
 
 

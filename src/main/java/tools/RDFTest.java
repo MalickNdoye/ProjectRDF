@@ -1,3 +1,5 @@
+package tools;
+
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import rdf.RDFModelFactory;

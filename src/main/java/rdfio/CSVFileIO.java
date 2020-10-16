@@ -1,11 +1,10 @@
 package rdfio;
 
 import org.apache.jena.rdf.model.Model;
+import rdf.DictionaryNode;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class CSVFileIO extends RDFFileIO {
 
@@ -19,6 +18,26 @@ public class CSVFileIO extends RDFFileIO {
 
     public Model load(String filePath, ArrayList<String> vars) {
         return null;
+    }
+
+    public void save(){
+        DictionaryNode dictionaryBN = DictionaryNode.getInstance();
+        PrintWriter writerDic = null;
+        Set<String> listKeys = null;
+        try {
+            writerDic = new PrintWriter(new FileWriter(dictionaryBN.getDictionaryPath()));
+            listKeys = dictionaryBN.keySet();
+            for (String key : listKeys) {
+                writerDic.write(key + "; ;" + dictionaryBN.get(key));
+                writerDic.write("\n");
+            }
+            writerDic.flush();
+            writerDic.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public Map<String, String> load(){
