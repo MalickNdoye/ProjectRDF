@@ -13,6 +13,7 @@ public final class DefaultParameter {
     public static String outputDirectoryUsed = outputDirectory;
     public static String graphPath1 = null;
     public static String graphPath2 = null;
+    public static String graphResult = null;
 
 
 

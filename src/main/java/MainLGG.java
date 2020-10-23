@@ -54,7 +54,7 @@ public class MainLGG {
         options.addOption(option_h);
 
         HelpFormatter formatter = new HelpFormatter();
-
+        mode = LggMode.LGG_GRAPH_MODE ;
         try {
             commandLine = parser.parse(options, args);
 
@@ -78,7 +78,11 @@ public class MainLGG {
             String[] remainder = commandLine.getArgs();
             if (remainder.length==2){
                 DefaultParameter.graphPath1 = remainder[0];
-                DefaultParameter.graphPath1 = remainder[1];
+                DefaultParameter.graphPath2 = remainder[1];
+                DefaultParameter.graphResult =DefaultParameter.outputDirectoryUsed + "/Lgg" +
+                        DefaultParameter.graphPath1.split("/")[DefaultParameter.graphPath1.split("/").length - 1].split("\\.")[0] +
+                        DefaultParameter.graphPath2.split("/")[DefaultParameter.graphPath2.split("/").length - 1].split("\\.")[0] +
+                        ".n3";
             }else{
                 String reason = remainder.length<2 ? "too few arguments" : "too much arguments" ;
                 System.err.println("ARGUMENT ERROR : "+reason);
@@ -119,7 +123,7 @@ public class MainLGG {
             }
             timeProd /= 5L;
             //resultat.write((OutputStream)System.out, "N-TRIPLE");
-            resultat.write(System.out, "N3");
+            resultat.write(System.out, "NTRIPLES");
             File csvFile = new File(DefaultParameter.dictionaryPathUsed);
             if (!csvFile.exists()) {
                 System.err.println("Le fichier " + DefaultParameter.infoPathUsed + " n'existe pas");
@@ -140,7 +144,7 @@ public class MainLGG {
             l_out.close();
             l_out = null;
             System.out.println("Writing ...");
-            lggGraphs.writelgg(DefaultParameter.outputDirectoryUsed, DefaultParameter.graphPath1, DefaultParameter.graphPath1, resultat);
+            lggGraphs.writelgg();
             System.out.println("End");
         }
         else {
