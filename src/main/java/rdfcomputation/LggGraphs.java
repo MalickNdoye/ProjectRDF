@@ -21,10 +21,13 @@ public class LggGraphs extends RDFComputation{
         super(query1, query2);
     }
 
-    public Model writelgg() {
+    public void writelgg() {
         PrintWriter writer = null;
         try {
             writer = new PrintWriter(new FileWriter(DefaultParameter.graphResult));
+            if (resultProd == null) {
+                this.ProductGraph(DefaultParameter.dictionaryPathUsed);
+            }
             StmtIterator si = resultProd.listStatements();
             while (si.hasNext()) {
                 final Statement s = si.nextStatement();
@@ -32,8 +35,7 @@ public class LggGraphs extends RDFComputation{
                     if (s.getPredicate().toString().charAt(0) == 'v') {
                         if (s.getObject().toString().charAt(0) == 'v') {
                             writer.write("?" + s.getSubject().toString().replaceAll("\\.", "") + " ?" + s.getPredicate().toString().replaceAll("\\.", "") + " ?" + s.getObject().toString().replaceAll("\\.", "") + " .\n");
-                        }
-                        else if (s.getObject().isLiteral()) {
+                        } else if (s.getObject().isLiteral()) {
                             writer.write("?" + s.getSubject().toString().replaceAll("\\.", "") + " ?" + s.getPredicate().toString().replaceAll("\\.", "") + " \"" + s.getObject() + "\" .\n");
                         }
                         else {
@@ -76,7 +78,6 @@ public class LggGraphs extends RDFComputation{
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return null;
     }
 
 
