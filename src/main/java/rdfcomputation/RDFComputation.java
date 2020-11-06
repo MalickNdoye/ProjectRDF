@@ -8,8 +8,8 @@ import java.util.HashMap;
 
 public class RDFComputation {
     //RDF Graphs
-    protected Model query1 ;
-    protected Model query2 ;
+    protected Model query1;
+    protected Model query2;
     protected Model resultProd;
     protected ArrayList<String> vars1; // should contain head variables of query1 but query1 is a graph
     protected ArrayList<String> vars2; // should contain head variables of query2 but query2 is a graph
@@ -17,20 +17,20 @@ public class RDFComputation {
     protected HashMap<String, String> prefixs;
 
 
-    public RDFComputation(){
+    public RDFComputation() {
         query1 = ModelFactory.createDefaultModel();
         query2 = ModelFactory.createDefaultModel();
-        resultProd = null ;
+        resultProd = null;
         vars1 = new ArrayList<String>();
         vars2 = new ArrayList<String>();
         prefixs = new HashMap<String, String>();
         blanknodes = new HashMap<String, String>();
     }
 
-    public RDFComputation(Model query1,Model query2){
+    public RDFComputation(Model query1, Model query2) {
         this.query1 = query1;
         this.query2 = query2;
-        resultProd = null ;
+        resultProd = null;
         vars1 = new ArrayList<String>();
         vars2 = new ArrayList<String>();
         prefixs = new HashMap<String, String>();
@@ -54,8 +54,7 @@ public class RDFComputation {
                     if (stmt1.getSubject().equals(stmt2.getSubject()) && this.isVars(stmt1.getSubject().toString())) {
                         if (stmt1.getObject().equals(stmt2.getObject()) && this.isVars(stmt1.getObject().toString())) {
                             resultProd.add(stmt1);
-                        }
-                        else {
+                        } else {
                             if (dictionaryBN.containsKey(stmt1.getObject().toString())) {
                                 dictionaryBN.put(stmt1.getObject().toString(), ctre);
                                 ++ctre;
@@ -70,8 +69,7 @@ public class RDFComputation {
                             Resource rs = resultProd.createResource(var1);
                             resultProd.add(stmt1.getSubject(), stmt1.getPredicate(), rs);
                         }
-                    }
-                    else if (stmt1.getObject().equals(stmt2.getObject()) && this.isVars(stmt1.getObject().toString())) {
+                    } else if (stmt1.getObject().equals(stmt2.getObject()) && this.isVars(stmt1.getObject().toString())) {
                         if (dictionaryBN.containsKey(stmt1.getSubject().toString())) {
                             dictionaryBN.put(stmt1.getSubject().toString(), ctre);
                             ++ctre;
@@ -85,8 +83,7 @@ public class RDFComputation {
                         String var1 = "v__" + varstmt1 + "__" + varstmt2;
                         Resource rs = resultProd.createResource(var1);
                         resultProd.add(rs, stmt1.getPredicate(), stmt1.getObject());
-                    }
-                    else {
+                    } else {
                         if (dictionaryBN.containsKey(stmt1.getSubject().toString())) {
                             dictionaryBN.put(stmt1.getSubject().toString(), ctre);
                             ++ctre;
@@ -248,21 +245,4 @@ public class RDFComputation {
         return blanknodes;
     }
 
-    /*
-    public void setQuery1(Model query1) {
-        this.query1 = query1;
-    }
-
-    public void setQuery2(Model query2) {
-        this.query2 = query2;
-    }
-
-    public void setVars1(ArrayList<String> vars1) {
-        this.vars1 = vars1;
-    }
-
-    public void setVars2(ArrayList<String> vars2) {
-        this.vars2 = vars2;
-    }
-    */
 }

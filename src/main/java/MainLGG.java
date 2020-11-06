@@ -12,32 +12,6 @@ import java.io.FileOutputStream;
 import java.io.PrintStream;
 
 public class MainLGG {
-    private final Model rdfGraph1 ;
-    private final Model rdfGraph2 ;
-
-    private MainLGG(){
-        rdfGraph1 = ModelFactory.createDefaultModel() ;
-        rdfGraph2 = ModelFactory.createDefaultModel() ;
-        LggMode mode = LggMode.DEFAULT;
-    }
-
-    private MainLGG(String pathGraph1, String pathGraph2, LggMode mode){
-        rdfGraph1 = ModelFactory.createDefaultModel() ;
-        rdfGraph2 = ModelFactory.createDefaultModel() ;
-        switch (mode){
-            case LGG_GRAPH_MODE:
-                //lire
-                break;
-            case LGG_QUERY_MODE:
-                //lire
-                break;
-            case DEFAULT:
-            default:
-                System.out.println("Choisir l'option de calcul de LGG");
-                break;
-        }
-    }
-
     //EXECUTION:
     //java -jar MainLGG [OPTION] pathToFile1 pathToFile2 -i pathToInfoFile -o pathToOutputDirectory -d pathToDictionary
     private static Boolean parsingInput(String[] args, LggMode mode) {

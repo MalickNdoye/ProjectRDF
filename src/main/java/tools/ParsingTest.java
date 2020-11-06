@@ -1,11 +1,10 @@
 package tools;
 
-import org.apache.commons.cli.*;
-
 public class ParsingTest {
 
 
     public static void main(String[] args) {
+        /*
         CommandLine commandLine;
         Option option_d = Option.builder("d").argName("dico").hasArg()
                 .desc(DefaultParameter.dictionaryArgumentDesc).optionalArg(true).build();
@@ -73,6 +72,6 @@ public class ParsingTest {
             System.out.print("Parse error: ");
             System.out.println(exception.getMessage());
         }
-
+        */
     }
 }
