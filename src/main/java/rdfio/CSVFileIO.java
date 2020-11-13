@@ -2,6 +2,7 @@ package rdfio;
 
 import org.apache.jena.rdf.model.Model;
 import rdf.DictionaryNode;
+import tools.DefaultParameter;
 
 import java.io.*;
 import java.util.*;
@@ -87,4 +88,23 @@ public class CSVFileIO extends RDFFileIO {
         }
         return null;
     }
+
+    public void writeInfo(long size,long timeProd) {
+        PrintStream l_out = null;
+        try {
+            l_out = new PrintStream(new FileOutputStream(DefaultParameter.infoPathUsed, true));
+            l_out.print(DefaultParameter.graphPath1.split("/")[DefaultParameter.graphPath1.split("/").length - 1].substring(0, DefaultParameter.graphPath1.split("/")[DefaultParameter.graphPath1.split("/").length - 1].length() - 4) + ";");
+            l_out.print(DefaultParameter.graphPath1.split("/")[DefaultParameter.graphPath1.split("/").length - 1].substring(0, DefaultParameter.graphPath1.split("/")[DefaultParameter.graphPath1.split("/").length - 1].length() - 4) + ";");
+            l_out.print(size + ";");
+            l_out.print(timeProd + ";");
+            l_out.println();
+            l_out.flush();
+            l_out.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
 }

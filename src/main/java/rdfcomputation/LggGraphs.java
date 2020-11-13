@@ -30,7 +30,7 @@ public class LggGraphs extends RDFComputation{
             }
             StmtIterator si = resultProd.listStatements();
             while (si.hasNext()) {
-                final Statement s = si.nextStatement();
+                Statement s = si.nextStatement();
                 if (s.getSubject().toString().charAt(0) == 'v') {
                     if (s.getPredicate().toString().charAt(0) == 'v') {
                         if (s.getObject().toString().charAt(0) == 'v') {

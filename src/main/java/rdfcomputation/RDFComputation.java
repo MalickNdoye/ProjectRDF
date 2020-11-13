@@ -41,7 +41,6 @@ public class RDFComputation {
 
     public Model ProductGraph(String dictionaryname) {
         resultProd = ModelFactory.createDefaultModel();
-        int varstmt2;
         DictionaryNode dictionaryBN = DictionaryNode.getInstance(dictionaryname);
         int ctre = dictionaryBN.size() + 1;
         StmtIterator i = query1.listStatements();
@@ -55,57 +54,53 @@ public class RDFComputation {
                         if (stmt1.getObject().equals(stmt2.getObject()) && this.isVars(stmt1.getObject().toString())) {
                             resultProd.add(stmt1);
                         } else {
-                            if (dictionaryBN.containsKey(stmt1.getObject().toString())) {
+                            if (!dictionaryBN.containsKey(stmt1.getObject().toString())) {
                                 dictionaryBN.put(stmt1.getObject().toString(), ctre);
                                 ++ctre;
                             }
-                            if (dictionaryBN.containsKey(stmt2.getObject().toString())) {
+                            if (!dictionaryBN.containsKey(stmt2.getObject().toString())) {
                                 dictionaryBN.put(stmt2.getObject().toString(), ctre);
                                 ++ctre;
                             }
                             int varstmt1 = dictionaryBN.get(stmt1.getObject().toString());
-                            varstmt2 = dictionaryBN.get(stmt2.getObject().toString());
-                            String var1 = "v__" + varstmt1 + "__" + varstmt2;
+                            String var1 = "v__" + varstmt1 + "__" + dictionaryBN.get(stmt2.getObject().toString());
                             Resource rs = resultProd.createResource(var1);
                             resultProd.add(stmt1.getSubject(), stmt1.getPredicate(), rs);
                         }
                     } else if (stmt1.getObject().equals(stmt2.getObject()) && this.isVars(stmt1.getObject().toString())) {
-                        if (dictionaryBN.containsKey(stmt1.getSubject().toString())) {
+                        if (!dictionaryBN.containsKey(stmt1.getSubject().toString())) {
                             dictionaryBN.put(stmt1.getSubject().toString(), ctre);
                             ++ctre;
                         }
-                        if (dictionaryBN.containsKey(stmt2.getSubject().toString())) {
+                        if (!dictionaryBN.containsKey(stmt2.getSubject().toString())) {
                             dictionaryBN.put(stmt2.getSubject().toString(), ctre);
                             ++ctre;
                         }
-                        int varstmt1 = dictionaryBN.get(stmt1.getSubject().toString());
-                        varstmt2 = dictionaryBN.get(stmt2.getSubject().toString());
-                        String var1 = "v__" + varstmt1 + "__" + varstmt2;
+                        String var1 = String.format("v__%d__%d", dictionaryBN.get(stmt1.getSubject().toString()),
+                                dictionaryBN.get(stmt2.getSubject().toString()));
                         Resource rs = resultProd.createResource(var1);
                         resultProd.add(rs, stmt1.getPredicate(), stmt1.getObject());
                     } else {
-                        if (dictionaryBN.containsKey(stmt1.getSubject().toString())) {
+                        if (!dictionaryBN.containsKey(stmt1.getSubject().toString())) {
                             dictionaryBN.put(stmt1.getSubject().toString(), ctre);
                             ++ctre;
                         }
-                        if (dictionaryBN.containsKey(stmt2.getSubject().toString())) {
+                        if (!dictionaryBN.containsKey(stmt2.getSubject().toString())) {
                             dictionaryBN.put(stmt2.getSubject().toString(), ctre);
                             ++ctre;
                         }
-                        int varstmt1 = dictionaryBN.get(stmt1.getSubject().toString());
-                        varstmt2 = dictionaryBN.get(stmt2.getSubject().toString());
-                        String var1 = "v__" + varstmt1 + "__" + varstmt2;
-                        if (dictionaryBN.containsKey(stmt1.getObject().toString())) {
+                        String var1 = String.format("v__%d__%d", dictionaryBN.get(stmt1.getSubject().toString()),
+                                dictionaryBN.get(stmt2.getSubject().toString()));
+                        if (!dictionaryBN.containsKey(stmt1.getObject().toString())) {
                             dictionaryBN.put(stmt1.getObject().toString(), ctre);
                             ++ctre;
                         }
-                        if (dictionaryBN.containsKey(stmt2.getObject().toString())) {
+                        if (!dictionaryBN.containsKey(stmt2.getObject().toString())) {
                             dictionaryBN.put(stmt2.getObject().toString(), ctre);
                             ++ctre;
                         }
-                        varstmt1 = dictionaryBN.get(stmt1.getObject().toString());
-                        varstmt2 = dictionaryBN.get(stmt2.getObject().toString());
-                        String var2 = "v__" + varstmt1 + "__" + varstmt2;
+                        String var2 = String.format("v__%d__%d", dictionaryBN.get(stmt1.getObject().toString()),
+                                dictionaryBN.get(stmt2.getObject().toString()));
                         Resource rs2 = resultProd.createResource(var1);
                         Resource rs3 = resultProd.createResource(var2);
                         resultProd.add(rs2, stmt1.getPredicate(), rs3);
@@ -168,47 +163,34 @@ public class RDFComputation {
                     }
                     if (spl[0].charAt(0) == '_') {
                         if (spl[1].charAt(0) == '_') {
-                            String var1 = "";
                             if (!this.blanknodes.containsKey(spl[0].substring(2))) {
-                                var1 = "y" + spl[0].substring(2);
-                                this.blanknodes.put(spl[0].substring(2), var1);
+                                this.blanknodes.put(spl[0].substring(2), "y" + spl[0].substring(2));
                             }
                             if (spl[2].charAt(0) == '_') {
-                                String var2 = "";
                                 if (!this.blanknodes.containsKey(spl[2].substring(2))) {
-                                    var2 = "y" + spl[2].substring(2);
-                                    this.blanknodes.put(spl[2].substring(2), var2);
+                                    this.blanknodes.put(spl[2].substring(2), "y" + spl[2].substring(2));
                                 }
                             } else if (spl[2].charAt(0) == '_') {
                                 if (!this.blanknodes.containsKey(spl[0].substring(2))) {
-                                    var1 = "y" + spl[0].substring(2);
-                                    this.blanknodes.put(spl[0].substring(2), var1);
+                                    this.blanknodes.put(spl[0].substring(2), "y" + spl[0].substring(2));
                                 }
-                                //final Resource rs1 = query.createResource(var1);
-                                String var2 = "";
                                 if (!this.blanknodes.containsKey(spl[2].substring(2))) {
-                                    var2 = "y" + spl[2].substring(2);
-                                    this.blanknodes.put(spl[2].substring(2), var2);
+                                    this.blanknodes.put(spl[2].substring(2), "y" + spl[2].substring(2));
                                 }
                             } else {
                                 if (!this.blanknodes.containsKey(spl[0].substring(2))) {
-                                    var1 = "y" + spl[0].substring(2);
-                                    this.blanknodes.put(spl[0].substring(2), var1);
+                                    this.blanknodes.put(spl[0].substring(2), "y" + spl[0].substring(2));
                                 }
                             }
                         } else if (spl[1].charAt(0) == '_') {
                             if (spl[2].charAt(0) == '_') {
-                                String var3 = "";
                                 if (!this.blanknodes.containsKey(spl[2].substring(2))) {
-                                    var3 = "v_" + spl[2].substring(2);
-                                    this.blanknodes.put(spl[2].substring(2), var3);
+                                    this.blanknodes.put(spl[2].substring(2), "v_" + spl[2].substring(2));
                                 }
                             }
                         } else if (spl[2].charAt(0) == '_') {
-                            String var2 = "";
                             if (!this.blanknodes.containsKey(spl[2].substring(2))) {
-                                var2 = "v_" + spl[2].substring(2);
-                                this.blanknodes.put(spl[2].substring(2), var2);
+                                this.blanknodes.put(spl[2].substring(2), "v_" + spl[2].substring(2));
                             }
                         }
                     }

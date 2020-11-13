@@ -3,18 +3,16 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import rdf.RDFModelFactory;
 import rdfcomputation.LggGraphs;
+import rdfio.CSVFileIO;
 import tools.DefaultParameter;
 import tools.LggMode;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
 
 public class MainLGG {
     //EXECUTION:
     //java -jar MainLGG [OPTION] pathToFile1 pathToFile2 -i pathToInfoFile -o pathToOutputDirectory -d pathToDictionary
-    private static Boolean parsingInput(String[] args, LggMode mode) {
+    private static Boolean parsingInput(String[] args) {
 
         CommandLine commandLine;
         Option option_d = Option.builder("d").argName("dico").hasArg()
@@ -37,7 +35,6 @@ public class MainLGG {
 
         HelpFormatter formatter = new HelpFormatter();
 
-        mode = LggMode.LGG_GRAPH_MODE;
         try {
             commandLine = parser.parse(options, args);
 
@@ -69,9 +66,8 @@ public class MainLGG {
                             ".n3";
                 } else {
                     String reason = remainder.length < 2 ? "too few arguments" : "too much arguments";
-                    System.err.println("ARGUMENT ERROR : " + reason);
+                    System.err.println("ARGUMENT ERROR : " + reason +"("+remainder.length+")");
                     formatter.printHelp("CLIsample", DefaultParameter.header, options, DefaultParameter.footer, true);
-                    mode = LggMode.INPUT_ERROR;
                     return false;
                 }
             }
@@ -86,10 +82,16 @@ public class MainLGG {
     public static void main(String[] args) {
         LggMode mode = LggMode.DEFAULT;
 
-        if (!parsingInput(args, mode)) {
+        if (!parsingInput(args)) {
+            //ATTENTION BUG POTENTIEL: voir notes - presences d'espaces dans un argument
+            for(String str : args){
+                System.out.print(str+"_");
+            }
+            System.out.println();
             System.out.println(mode);
             return;
         }
+
         RDFModelFactory modelFactory = new RDFModelFactory();
         LggGraphs lggGraphs = modelFactory.loadlgg(DefaultParameter.graphPath1,
                 DefaultParameter.graphPath2);
@@ -106,25 +108,12 @@ public class MainLGG {
             timeProd /= 5L;
             //resultat.write((OutputStream)System.out, "N-TRIPLE");
             resultat.write(System.out, "NTRIPLES");
-            File csvFile = new File(DefaultParameter.dictionaryPathUsed);
-            if (!csvFile.exists()) {
+            CSVFileIO csvFileIO =  new CSVFileIO(DefaultParameter.dictionaryPathUsed) ;
+            if (!csvFileIO.checkFile()) {
                 System.err.println("Le fichier " + DefaultParameter.infoPathUsed + " n'existe pas");
                 return;
             }
-            PrintStream l_out = null;
-            try {
-                l_out = new PrintStream(new FileOutputStream(DefaultParameter.infoPathUsed, true));
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-            l_out.print(DefaultParameter.graphPath1.split("/")[DefaultParameter.graphPath1.split("/").length - 1].substring(0, DefaultParameter.graphPath1.split("/")[DefaultParameter.graphPath1.split("/").length - 1].length() - 4) + ";");
-            l_out.print(DefaultParameter.graphPath1.split("/")[DefaultParameter.graphPath1.split("/").length - 1].substring(0, DefaultParameter.graphPath1.split("/")[DefaultParameter.graphPath1.split("/").length - 1].length() - 4) + ";");
-            l_out.print(resultat.size() + ";");
-            l_out.print(timeProd + ";");
-            l_out.println();
-            l_out.flush();
-            l_out.close();
-            l_out = null;
+            csvFileIO.writeInfo(resultat.size(),timeProd);
             System.out.println("Writing ...");
             lggGraphs.writelgg();
             System.out.println("End");

@@ -27,4 +27,8 @@ public abstract class RDFFileIO implements RDFFileInputMethod {
         File file = new File(filepath);
         return file.exists() && file.isFile() && !file.isDirectory();
     }
+
+    public Boolean checkFile(){
+        return checkFile(filepath);
+    }
 }
