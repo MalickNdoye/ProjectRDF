@@ -42,12 +42,8 @@ public class RDFComputation {
     public Model ProductGraph(String dictionaryname) {
         resultProd = ModelFactory.createDefaultModel();
         DictionaryNode dictionaryBN = DictionaryNode.getInstance(dictionaryname);
-        StmtIterator i = query1.listStatements();
-        while (i.hasNext()) {
-            Statement stmt1 = i.nextStatement();
-            StmtIterator j = query2.listStatements();
-            while (j.hasNext()) {
-                Statement stmt2 = j.nextStatement();
+        for(Statement stmt1 : query1.listStatements().toList()){
+            for(Statement stmt2 : query2.listStatements().toList()){
                 if (stmt1.getPredicate().equals(stmt2.getPredicate())) {
                     if (stmt1.getSubject().equals(stmt2.getSubject()) && this.isNotVars(stmt1.getSubject().toString())) {
                         if (stmt1.getObject().equals(stmt2.getObject()) && this.isNotVars(stmt1.getObject().toString())) {
@@ -57,25 +53,23 @@ public class RDFComputation {
                             dictionaryBN.update(stmt2.getObject().toString());
                             String var1 = String.format("v__%d__%d", dictionaryBN.get(stmt1.getObject().toString()),
                                     dictionaryBN.get(stmt2.getObject().toString()));
-                            Resource rs = resultProd.createResource(var1);
-                            resultProd.add(stmt1.getSubject(), stmt1.getPredicate(), rs);
+                            resultProd.add(stmt1.getSubject(), stmt1.getPredicate(), resultProd.createResource(var1));
                         }
                     } else {
                         dictionaryBN.update(stmt1.getObject().toString());
                         dictionaryBN.update(stmt2.getObject().toString());
-                        String var1 = String.format("v__%d__%d", dictionaryBN.get(stmt1.getSubject().toString()),
+                        String var1 = String.format("v__%d__%d",
+                                dictionaryBN.get(stmt1.getSubject().toString()),
                                 dictionaryBN.get(stmt2.getSubject().toString()));
                         if (stmt1.getObject().equals(stmt2.getObject()) && this.isNotVars(stmt1.getObject().toString())) {
-                            Resource rs = resultProd.createResource(var1);
-                            resultProd.add(rs, stmt1.getPredicate(), stmt1.getObject());
+                            resultProd.add(resultProd.createResource(var1), stmt1.getPredicate(), stmt1.getObject());
                         } else {
                             dictionaryBN.update(stmt1.getObject().toString());
                             dictionaryBN.update(stmt2.getObject().toString());
                             String var2 = String.format("v__%d__%d", dictionaryBN.get(stmt1.getObject().toString()),
                                     dictionaryBN.get(stmt2.getObject().toString()));
-                            Resource rs2 = resultProd.createResource(var1);
-                            Resource rs3 = resultProd.createResource(var2);
-                            resultProd.add(rs2, stmt1.getPredicate(), rs3);
+                            resultProd.add(resultProd.createResource(var1), stmt1.getPredicate(),
+                                    resultProd.createResource(var2));
                         }
                     }
                 }
