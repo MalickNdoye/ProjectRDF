@@ -2,8 +2,6 @@ package rdfcomputation;
 
 import org.apache.jena.rdf.model.*;
 
-import java.io.*;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 

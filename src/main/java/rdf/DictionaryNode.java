@@ -25,20 +25,8 @@ public class DictionaryNode {
         dictionaryBN = csvIO.load();
     }
 
-    public boolean containsKey(String key) {
-        return !dictionaryBN.containsKey(key);
-    }
-
-    public void put(String key, Integer value) {
-        dictionaryBN.put(key,value);
-    }
-
     public Integer get(String toString) {
         return dictionaryBN.get(toString);
-    }
-
-    public int size() {
-        return dictionaryBN.size();
     }
 
     public Set<String> keySet() {
@@ -68,6 +56,14 @@ public class DictionaryNode {
 
     public String getDictionaryPath(){
         return DictionaryNode.dictionaryPath ;
+    }
+
+    public synchronized Boolean update(String uri){
+        if (!dictionaryBN.containsKey(uri)) {
+            dictionaryBN.put(uri, dictionaryBN.size()+1);
+            return true;
+        }
+        return false ;
     }
 
 

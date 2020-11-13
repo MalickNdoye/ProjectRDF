@@ -1,8 +1,5 @@
 package rdfio;
 
-import org.apache.jena.rdf.model.Model;
-
-import java.util.ArrayList;
 import java.util.Map;
 
 public interface RDFFileInputMethod {

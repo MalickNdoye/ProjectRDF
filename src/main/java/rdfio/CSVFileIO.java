@@ -1,6 +1,5 @@
 package rdfio;
 
-import org.apache.jena.rdf.model.Model;
 import rdf.DictionaryNode;
 import tools.DefaultParameter;
 

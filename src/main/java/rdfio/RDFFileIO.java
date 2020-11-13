@@ -1,10 +1,6 @@
 package rdfio;
 
-import org.apache.jena.rdf.model.Model;
-
 import java.io.File;
-import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Map;
 
 public abstract class RDFFileIO implements RDFFileInputMethod {
