@@ -67,7 +67,7 @@ public class RDFComputation {
                             Resource rs = resultProd.createResource(var1);
                             resultProd.add(stmt1.getSubject(), stmt1.getPredicate(), rs);
                         }
-                    } else if (stmt1.getObject().equals(stmt2.getObject()) && this.isVars(stmt1.getObject().toString())) {
+                    } else if (stmt1.getObject().equals(stmt2.getObject()) && !this.isVars(stmt1.getObject().toString())) {
                         if (!dictionaryBN.containsKey(stmt1.getSubject().toString())) {
                             dictionaryBN.put(stmt1.getSubject().toString(), ctre);
                             ++ctre;

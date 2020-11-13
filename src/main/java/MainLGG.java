@@ -7,8 +7,6 @@ import rdfio.CSVFileIO;
 import tools.DefaultParameter;
 import tools.LggMode;
 
-import java.io.File;
-
 public class MainLGG {
     //EXECUTION:
     //java -jar MainLGG [OPTION] pathToFile1 pathToFile2 -i pathToInfoFile -o pathToOutputDirectory -d pathToDictionary
