@@ -100,13 +100,14 @@ public class MainLGG {
             Model resultat = ModelFactory.createDefaultModel();
             long timeProd = 0L;
             for (int i = 0; i < 5; ++i) {
-                final long start = System.nanoTime();
-                resultat = lggGraphs.ProductGraph(DefaultParameter.dictionaryPathUsed);
+                long start = System.nanoTime();
+                resultat = lggGraphs.productGraph();
                 timeProd += System.nanoTime() - start;
             }
             timeProd /= 5L;
             //resultat.write((OutputStream)System.out, "N-TRIPLE");
-            resultat.write(System.out, String.valueOf(Lang.NTRIPLES));
+            //System.out.println(Lang.NTRIPLES.getLabel());
+            resultat.write(System.out,Lang.NTRIPLES.getLabel());
             CSVFileIO csvFileIO =  new CSVFileIO(DefaultParameter.dictionaryPathUsed) ;
             if (!csvFileIO.checkFile()) {
                 System.err.println("Le fichier " + DefaultParameter.infoPathUsed + " n'existe pas");

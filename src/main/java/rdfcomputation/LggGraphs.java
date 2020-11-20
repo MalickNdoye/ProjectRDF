@@ -26,7 +26,7 @@ public class LggGraphs extends RDFComputation{
         try {
             writer = new PrintWriter(new FileWriter(DefaultParameter.graphResult));
             if (resultProd == null) {
-                this.ProductGraph(DefaultParameter.dictionaryPathUsed);
+                this.productGraph();
             }
             StmtIterator si = resultProd.listStatements();
             while (si.hasNext()) {

@@ -81,6 +81,9 @@ public class CSVFileIO extends RDFFileIO {
                     dictionaryBN.put(splt[0], Integer.parseInt(splt[1]));
                 }
             }
+            br.close();
+            ipsr.close();
+            ips.close();
             return dictionaryBN ;
         }catch (IOException e){
             e.printStackTrace();

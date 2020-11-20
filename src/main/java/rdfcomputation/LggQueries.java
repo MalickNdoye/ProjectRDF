@@ -17,7 +17,7 @@ public class LggQueries extends RDFComputation{
         this.prefixs = new HashMap<String, String>();
     }
 
-    public  LggQueries(Model query1,Model query2){
+    public LggQueries(Model query1,Model query2){
         super(query1, query2);
         resultProd = ModelFactory.createDefaultModel();
         this.blanknodes = new HashMap<String, String>();

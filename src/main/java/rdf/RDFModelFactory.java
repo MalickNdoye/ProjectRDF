@@ -29,7 +29,7 @@ public class RDFModelFactory {
     public Model read(){
         Model model = null ;
         try {
-            model = RDFDataMgr.loadModel(filepath, Lang.N3);
+            model = RDFDataMgr.loadModel(filepath,Lang.NTRIPLES);
         }catch (RiotException e){
             System.err.println("Erreur sur le fichier N3 ou sur le paramètre de lecture : "+filepath);
             try {
@@ -50,7 +50,6 @@ public class RDFModelFactory {
 
     public LggGraphs loadlgg(String filepath1, String filepath2) {
         LggGraphs rdf = new LggGraphs();
-
         try {
             this.load(rdf, filepath1, 1);
             this.load(rdf, filepath2, 2);
@@ -74,12 +73,12 @@ public class RDFModelFactory {
                 query = rdf.getQuery2();
                 break;
             default:
-                throw new IOException("Errur de chargement 1");
+                throw new IOException("Erreur de chargement 1");
         }
         HashMap<String, String> prefixs = rdf.getPrefixs();
         HashMap<String, String> blanknodes = rdf.getBlanknodes();
-        final InputStream ips = new FileInputStream(fileName);
-        final InputStreamReader ipsr = new InputStreamReader(ips);
+        InputStream ips = new FileInputStream(fileName);
+        InputStreamReader ipsr = new InputStreamReader(ips);
         BufferedReader br = new BufferedReader(ipsr);
         String ligne;
         while ((ligne = br.readLine()) != null) {

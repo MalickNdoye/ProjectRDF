@@ -2,6 +2,7 @@ package rdfcomputation;
 
 import org.apache.jena.rdf.model.*;
 import rdf.DictionaryNode;
+import tools.DefaultParameter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,33 +40,31 @@ public class RDFComputation {
 
     }
 
-    public Model ProductGraph(String dictionaryname) {
+    public Model productGraph() {
         resultProd = ModelFactory.createDefaultModel();
-        DictionaryNode dictionaryBN = DictionaryNode.getInstance(dictionaryname);
+        DictionaryNode dictionaryBN = DictionaryNode.getInstance(DefaultParameter.dictionaryPathUsed);
         for(Statement stmt1 : query1.listStatements().toList()){
+            dictionaryBN.update(stmt1.getSubject().toString());
+            dictionaryBN.update(stmt1.getObject().toString());
             for(Statement stmt2 : query2.listStatements().toList()){
+                dictionaryBN.update(stmt2.getSubject().toString());
+                dictionaryBN.update(stmt2.getObject().toString());
                 if (stmt1.getPredicate().equals(stmt2.getPredicate())) {
                     if (stmt1.getSubject().equals(stmt2.getSubject()) && this.isNotVars(stmt1.getSubject().toString())) {
                         if (stmt1.getObject().equals(stmt2.getObject()) && this.isNotVars(stmt1.getObject().toString())) {
                             resultProd.add(stmt1);
                         } else {
-                            dictionaryBN.update(stmt1.getObject().toString());
-                            dictionaryBN.update(stmt2.getObject().toString());
                             String var1 = String.format("v__%d__%d", dictionaryBN.get(stmt1.getObject().toString()),
                                     dictionaryBN.get(stmt2.getObject().toString()));
                             resultProd.add(stmt1.getSubject(), stmt1.getPredicate(), resultProd.createResource(var1));
                         }
                     } else {
-                        dictionaryBN.update(stmt1.getObject().toString());
-                        dictionaryBN.update(stmt2.getObject().toString());
                         String var1 = String.format("v__%d__%d",
                                 dictionaryBN.get(stmt1.getSubject().toString()),
                                 dictionaryBN.get(stmt2.getSubject().toString()));
                         if (stmt1.getObject().equals(stmt2.getObject()) && this.isNotVars(stmt1.getObject().toString())) {
                             resultProd.add(resultProd.createResource(var1), stmt1.getPredicate(), stmt1.getObject());
                         } else {
-                            dictionaryBN.update(stmt1.getObject().toString());
-                            dictionaryBN.update(stmt2.getObject().toString());
                             String var2 = String.format("v__%d__%d", dictionaryBN.get(stmt1.getObject().toString()),
                                     dictionaryBN.get(stmt2.getObject().toString()));
                             resultProd.add(resultProd.createResource(var1), stmt1.getPredicate(),
@@ -164,6 +163,7 @@ public class RDFComputation {
                 }
             }
         }
+
     }
 
     public boolean isNotVars(String s) {
