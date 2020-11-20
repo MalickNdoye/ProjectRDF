@@ -1,6 +1,7 @@
 import org.apache.commons.cli.*;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.riot.Lang;
 import rdf.RDFModelFactory;
 import rdfcomputation.LggGraphs;
 import rdfio.CSVFileIO;
@@ -105,7 +106,7 @@ public class MainLGG {
             }
             timeProd /= 5L;
             //resultat.write((OutputStream)System.out, "N-TRIPLE");
-            resultat.write(System.out, "NTRIPLES");
+            resultat.write(System.out, String.valueOf(Lang.NTRIPLES));
             CSVFileIO csvFileIO =  new CSVFileIO(DefaultParameter.dictionaryPathUsed) ;
             if (!csvFileIO.checkFile()) {
                 System.err.println("Le fichier " + DefaultParameter.infoPathUsed + " n'existe pas");
