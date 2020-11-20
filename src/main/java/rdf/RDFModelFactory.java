@@ -61,8 +61,8 @@ public class RDFModelFactory {
     }
 
     private void load(RDFComputation rdf, final String fileName, int number) throws IOException {
-        ArrayList<String> vars = null;
-        Model query = null;
+        ArrayList<String> vars;
+        Model query;
         switch (number) {
             case 1:
                 vars = rdf.getVars1();
@@ -94,36 +94,34 @@ public class RDFModelFactory {
                     continue;
                 }
                 if (spl[0].charAt(0) == '_') {
+                    String var1 ;
                     if (spl[1].charAt(0) == '_') {
                         if (spl[2].charAt(0) == '_') {
-                            String var1 = "";
                             if (blanknodes.containsKey(spl[0].substring(2))) {
                                 var1 = blanknodes.get(spl[0].substring(2));
                             } else {
                                 var1 = "y" + spl[0].substring(2);
                                 blanknodes.put(spl[0].substring(2), var1);
                             }
-                            final Resource rs1 = query.createResource(var1);
-                            String var2 = "";
+                            Resource rs1 = query.createResource(var1);
+                            String var2 ;
                             if (blanknodes.containsKey(spl[2].substring(2))) {
                                 var2 = blanknodes.get(spl[2].substring(2));
                             } else {
                                 var2 = "y" + spl[2].substring(2);
                                 blanknodes.put(spl[2].substring(2), var2);
                             }
-                            final Resource rs2 = query.createResource(var2);
-                            final String st = "y" + spl[1].substring(2);
-                            final Property pr = query.createProperty(st);
+                            Resource rs2 = query.createResource(var2);
+                            Property pr = query.createProperty("y" + spl[1].substring(2));
                             query.add(rs1, pr, rs2);
                         } else {
-                            String var1 = "";
                             if (blanknodes.containsKey(spl[0].substring(2))) {
                                 var1 = blanknodes.get(spl[0].substring(2));
                             } else {
                                 var1 = "y" + spl[0].substring(2);
                                 blanknodes.put(spl[0].substring(2), var1);
                             }
-                            final Resource rs1 = query.createResource(var1);
+                            Resource rs1 = query.createResource(var1);
                             final String st2 = "y" + spl[1].substring(2);
                             final Property pr2 = query.createProperty(st2);
                             Resource rs3 = null;
@@ -144,7 +142,6 @@ public class RDFModelFactory {
                             }
                         }
                     } else if (spl[2].charAt(0) == '_') {
-                        String var1 = "";
                         if (blanknodes.containsKey(spl[0].substring(2))) {
                             var1 = blanknodes.get(spl[0].substring(2));
                         } else {
@@ -152,7 +149,7 @@ public class RDFModelFactory {
                             blanknodes.put(spl[0].substring(2), var1);
                         }
                         final Resource rs1 = query.createResource(var1);
-                        String var2 = "";
+                        String var2;
                         if (blanknodes.containsKey(spl[2].substring(2))) {
                             var2 = blanknodes.get(spl[2].substring(2));
                         } else {
@@ -160,7 +157,7 @@ public class RDFModelFactory {
                             blanknodes.put(spl[2].substring(2), var2);
                         }
                         final Resource rs2 = query.createResource(var2);
-                        Property pr3 = null;
+                        Property pr3;
                         if (spl[1].equals("a")) {
                             pr3 = query.createProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
                         } else if (prefixs.containsKey(getprefx(spl[1]))) {
@@ -172,7 +169,6 @@ public class RDFModelFactory {
                         }
                         query.add(rs1, pr3, rs2);
                     } else {
-                        String var1 = "";
                         if (blanknodes.containsKey(spl[0].substring(2))) {
                             var1 = blanknodes.get(spl[0].substring(2));
                         } else {
@@ -181,7 +177,7 @@ public class RDFModelFactory {
                         }
                         final Resource rs1 = query.createResource(var1);
                         Resource rs4 = null;
-                        Property pr2 = null;
+                        Property pr2;
                         Literal lt2 = null;
                         if (prefixs.containsKey(getprefx(spl[2]))) {
                             rs4 = query.createResource(prefixs.get(getprefx(spl[2])) + getname(spl[2]));
@@ -211,7 +207,7 @@ public class RDFModelFactory {
                     }
                 } else if (spl[1].charAt(0) == '_') {
                     if (spl[2].charAt(0) == '_') {
-                        Resource rs5 = null;
+                        Resource rs5 ;
                         if (prefixs.containsKey(getprefx(spl[0]))) {
                             rs5 = query.createResource(prefixs.get(getprefx(spl[0])) + getname(spl[0]));
                         } else if (spl[0].charAt(0) == '<') {
@@ -219,19 +215,17 @@ public class RDFModelFactory {
                         } else {
                             rs5 = query.createResource(spl[0]);
                         }
-                        String var3 = "";
+                        String var3 ;
                         if (blanknodes.containsKey(spl[2].substring(2))) {
                             var3 = blanknodes.get(spl[2].substring(2));
                         } else {
                             var3 = "v_" + spl[2].substring(2);
                             blanknodes.put(spl[2].substring(2), var3);
                         }
-                        final Resource rs4 = query.createResource(var3);
-                        final String st3 = "v_" + spl[1].substring(2);
-                        final Property pr3 = query.createProperty(st3);
-                        query.add(rs5, pr3, rs4);
+                        Property pr3 = query.createProperty("v_" + spl[1].substring(2));
+                        query.add(rs5, pr3, query.createResource(var3));
                     } else {
-                        Resource rs5 = null;
+                        Resource rs5;
                         if (prefixs.containsKey(getprefx(spl[0]))) {
                             rs5 = query.createResource(prefixs.get(getprefx(spl[0])) + getname(spl[0]));
                         } else if (spl[0].charAt(0) == '<') {
@@ -239,8 +233,7 @@ public class RDFModelFactory {
                         } else {
                             rs5 = query.createResource(spl[0]);
                         }
-                        final String st4 = "v_" + spl[1].substring(2);
-                        final Property pr4 = query.createProperty(st4);
+                        Property pr4 = query.createProperty("v_" + spl[1].substring(2));
                         Resource rs2 = null;
                         Literal lt2 = null;
                         if (prefixs.containsKey(getprefx(spl[2]))) {
@@ -259,7 +252,7 @@ public class RDFModelFactory {
                         }
                     }
                 } else if (spl[2].charAt(0) == '_') {
-                    Resource rs5 = null;
+                    Resource rs5;
                     if (prefixs.containsKey(getprefx(spl[0]))) {
                         rs5 = query.createResource(prefixs.get(getprefx(spl[0])) + getname(spl[0]));
                     } else if (spl[0].charAt(0) == '<') {
@@ -267,7 +260,7 @@ public class RDFModelFactory {
                     } else {
                         rs5 = query.createResource(spl[0]);
                     }
-                    Property pr5 = null;
+                    Property pr5;
                     if (spl[1].equals("a")) {
                         pr5 = query.createProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
                     } else if (prefixs.containsKey(getprefx(spl[1]))) {
@@ -279,7 +272,7 @@ public class RDFModelFactory {
                     } else {
                         pr5 = query.createProperty(spl[1]);
                     }
-                    String var2 = "";
+                    String var2 ;
                     if (blanknodes.containsKey(spl[2].substring(2))) {
                         var2 = blanknodes.get(spl[2].substring(2));
                     } else {
@@ -289,7 +282,7 @@ public class RDFModelFactory {
                     final Resource rs2 = query.createResource(var2);
                     query.add(rs5, pr5, rs2);
                 } else {
-                    Resource rs5 = null;
+                    Resource rs5 ;
                     if (prefixs.containsKey(getprefx(spl[0]))) {
                         rs5 = query.createResource(prefixs.get(getprefx(spl[0])) + getname(spl[0]));
                     } else if (spl[0].charAt(0) == '<') {
@@ -297,7 +290,7 @@ public class RDFModelFactory {
                     } else {
                         rs5 = query.createResource(spl[0]);
                     }
-                    Property pr5 = null;
+                    Property pr5 ;
                     if (spl[1].equals("a")) {
                         pr5 = query.createProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
                     } else if (prefixs.containsKey(getprefx(spl[1]))) {
@@ -328,6 +321,9 @@ public class RDFModelFactory {
                 }
             }
         }
+        br.close();
+        ipsr.close();
+        ips.close();
     }
 
     private String getprefx(final String ligne) {

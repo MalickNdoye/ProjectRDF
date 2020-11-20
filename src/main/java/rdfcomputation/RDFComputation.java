@@ -36,7 +36,7 @@ public class RDFComputation {
         vars2 = new ArrayList<>();
         prefixs = new HashMap<>();
         blanknodes = new HashMap<>();
-        this.load(3);
+        this.loadAttributes(3);
 
     }
 
@@ -78,7 +78,7 @@ public class RDFComputation {
         return resultProd;
     }
 
-    public void load(int number) {
+    private void loadAttributes(int number) {
         ArrayList<String> vars = null;
         Model query = null;
         switch (number) {
@@ -91,8 +91,8 @@ public class RDFComputation {
                 query = this.query2;
                 break;
             default:
-                this.load(1);
-                this.load(2);
+                this.loadAttributes(1);
+                this.loadAttributes(2);
                 break;
         }
         if (query != null) {
@@ -102,7 +102,7 @@ public class RDFComputation {
                 Resource subject = stmt.getSubject();     // get the subject
                 Property predicate = stmt.getPredicate();   // get the predicate
                 RDFNode object = stmt.getObject();      // get the object
-                //System.out.print(" " + predicate.toString() + " ");
+
                 String ligne;
                 String objectType;
                 if (object instanceof Resource) {
@@ -116,7 +116,7 @@ public class RDFComputation {
                         predicate.toString(),
                         objectType);
 
-                final String[] spl = ligne.split(" ");
+                String[] spl = ligne.split(" ");
                 if (spl[0].equals("head")) {
                     for (int i = 1; i < spl.length; ++i) {
                         vars.add(spl[i].substring(2));
