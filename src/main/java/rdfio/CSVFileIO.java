@@ -18,8 +18,8 @@ public class CSVFileIO extends RDFFileIO {
 
     private void save(){
         DictionaryNode dictionaryBN = DictionaryNode.getInstance();
-        PrintWriter writerDic = null;
-        Set<String> listKeys = null;
+        PrintWriter writerDic;
+        Set<String> listKeys;
         try {
             writerDic = new PrintWriter(new FileWriter(filepath));
             listKeys = dictionaryBN.keySet();
@@ -40,31 +40,6 @@ public class CSVFileIO extends RDFFileIO {
         this.save();
     }
 
-
-    /*
-    public Map<String, String> load(){
-        if (!checkFile(filepath)){
-            return null ;
-        }
-        try {
-            InputStream ips = new FileInputStream(this.filepath);
-            InputStreamReader ipsr = new InputStreamReader(ips);
-            BufferedReader br = new BufferedReader(ipsr);
-            Map<String,String> dictionaryBN = new HashMap<String,String>() ;
-            String line = "";
-            while ((line = br.readLine()) != null) {
-                final String[] splt = line.split("; ;");
-                if (splt.length == 2) {
-                    dictionaryBN.put(splt[0], splt[1]);
-                }
-            }
-            return dictionaryBN ;
-        }catch (IOException e){
-            e.printStackTrace();
-        }
-        return null;
-    }*/
-
     public Map<String, Integer> load(){
         if (!checkFile(filepath)){
             return null ;
@@ -73,8 +48,8 @@ public class CSVFileIO extends RDFFileIO {
             InputStream ips = new FileInputStream(this.filepath);
             InputStreamReader ipsr = new InputStreamReader(ips);
             BufferedReader br = new BufferedReader(ipsr);
-            Map<String,Integer> dictionaryBN = new HashMap<String,Integer>() ;
-            String line = "";
+            Map<String,Integer> dictionaryBN = new HashMap<>() ;
+            String line;
             while ((line = br.readLine()) != null) {
                 final String[] splt = line.split("; ;");
                 if (splt.length == 2) {
@@ -92,7 +67,7 @@ public class CSVFileIO extends RDFFileIO {
     }
 
     public void writeInfo(long size,long timeProd) {
-        PrintStream l_out = null;
+        PrintStream l_out ;
         try {
             l_out = new PrintStream(new FileOutputStream(DefaultParameter.infoPathUsed, true));
             l_out.print(DefaultParameter.graphPath1.split("/")[DefaultParameter.graphPath1.split("/").length - 1].substring(0, DefaultParameter.graphPath1.split("/")[DefaultParameter.graphPath1.split("/").length - 1].length() - 4) + ";");

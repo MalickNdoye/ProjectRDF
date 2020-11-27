@@ -17,12 +17,12 @@ public class LggGraphs extends RDFComputation{
         super();
     }
 
-    public  LggGraphs(Model query1,Model query2){
+    public LggGraphs(Model query1,Model query2){
         super(query1, query2);
     }
 
     public void writelgg() {
-        PrintWriter writer = null;
+        PrintWriter writer ;
         try {
             writer = new PrintWriter(new FileWriter(DefaultParameter.graphResult));
             if (resultProd == null) {

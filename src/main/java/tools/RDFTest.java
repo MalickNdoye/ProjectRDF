@@ -1,10 +1,8 @@
 package tools;
 
-import org.apache.jena.rdf.model.*;
-import rdf.DictionaryNode;
+import org.apache.jena.rdf.model.Model;
 import rdf.RDFModelFactory;
 import rdfcomputation.LggGraphs;
-import rdfcomputation.RDFComputation;
 
 public class RDFTest {
     public static void main(String[] args) {
