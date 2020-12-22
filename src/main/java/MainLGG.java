@@ -8,9 +8,24 @@ import rdfio.CSVFileIO;
 import tools.DefaultParameter;
 import tools.LggMode;
 
+
+
+/**
+ *
+ * MainLGG est la classe principale contenant la fonction main.
+ *
+ * @version 1.0.0
+ */
 public class MainLGG {
     //EXECUTION:
     //java -jar MainLGG [OPTION] pathToFile1 pathToFile2 -i pathToInfoFile -o pathToOutputDirectory -d pathToDictionary
+
+    /**
+     * Retourne la validité des paramtètres en entrées.
+     * Cette méthode effectue le parsing des arguments entrés lors de l'exécution.
+     * @param args Arguments en entrée de l'applicattion.
+     * @return True si les arguments sont conformes, False sinon.
+     */
     private static Boolean parsingInput(String[] args) {
 
         CommandLine commandLine;

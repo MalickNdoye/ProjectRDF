@@ -1,7 +1,13 @@
-package tools;
-
 import org.apache.commons.cli.*;
+import tools.DefaultParameter;
 
+
+/**
+ *  ParsingTest est la classe qui sert à tester le parsing des entrées de l'application.
+ *
+ * @author tndoye
+ * @version 1.0.0
+ */
 public class ParsingTest {
 
 

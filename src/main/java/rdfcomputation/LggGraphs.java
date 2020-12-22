@@ -9,18 +9,32 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-
+/**
+ * LggGraphs est la classe qui effectue le calcul de LGG sur des graphes.
+ *
+ * @see RDFComputation
+ * @version 1.0.0
+ */
 public class LggGraphs extends RDFComputation{
 
-
+    /**
+     * @see RDFComputation#RDFComputation()
+     */
     public LggGraphs(){
         super();
     }
 
+    /**
+     * @see RDFComputation#RDFComputation(Model, Model)
+     */
     public LggGraphs(Model query1,Model query2){
         super(query1, query2);
     }
 
+    /**
+     * Calcule le LGG de deux graphes. Le résultat est stocké dans resultProd.
+     * @see RDFComputation
+     */
     public void writelgg() {
         PrintWriter writer ;
         try {

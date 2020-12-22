@@ -6,16 +6,34 @@ import tools.DefaultParameter;
 import java.io.*;
 import java.util.*;
 
+
+/**
+ * CSVFileIO est la classe qui gère l'écriture et la lecture des fichiers csv.
+ *
+ * @see rdfio.RDFFileIO
+ * @version 1.0.0
+ */
 public class CSVFileIO extends RDFFileIO {
 
+    /**
+     * @see RDFFileIO#RDFFileIO()
+     */
     public CSVFileIO(){
         super();
     }
 
+    /**
+     * @see RDFFileIO#RDFFileIO(String)
+     */
     public CSVFileIO(String filepath){
         super(filepath);
     }
 
+    /**
+     * Sauvegarde le dictionnaire dans le fichier indiqué par le chemin défini par défaut.
+     * @see RDFFileInputMethod#save(String)
+     * @see DictionaryNode#save()
+     */
     private void save(){
         DictionaryNode dictionaryBN = DictionaryNode.getInstance();
         PrintWriter writerDic;
@@ -35,11 +53,18 @@ public class CSVFileIO extends RDFFileIO {
         }
     }
 
+    /**
+     * Sauvegarde le dictionnaire dans le fichier indiqué par le chemin défini en entrée.
+     * @see #save()
+     */
     public void save(String filePath){
         this.filepath = filePath;
         this.save();
     }
 
+    /**
+     * @see RDFFileInputMethod#load()
+     */
     public Map<String, Integer> load(){
         if (!checkFile(filepath)){
             return null ;
@@ -66,6 +91,12 @@ public class CSVFileIO extends RDFFileIO {
         return null;
     }
 
+    /**
+     * Sauvegarde les informations d'exécutions dans un fichier
+     * @param size Taille du graphe obtenu après traitement.
+     * @param timeProd Temps de traitement.
+     * @see rdfcomputation.RDFComputation
+     */
     public void writeInfo(long size,long timeProd) {
         PrintStream l_out ;
         try {

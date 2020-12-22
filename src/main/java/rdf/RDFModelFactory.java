@@ -14,18 +14,38 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-
+/**
+ * RDFModelFactory est la classe qui génére des objets Model de l'API Jena et des objets RDFComputation.
+ *
+ * @version 1.0.0
+ */
 public class RDFModelFactory {
+    /**
+     * Chemin vers le fichier contenant les informations du graphes RDF.
+     */
     private String filepath;
 
+
+    /**
+     * Construteur par défaut.
+     */
     public RDFModelFactory(){
         filepath = "UNKOWN PATH";
     }
 
+    /**
+     * Contructeur qui initialise le filepath.
+     * @param path Chemin vers le fichier.
+     */
     public RDFModelFactory(String path){
         this.filepath = path ;
     }
 
+    /**
+     * Crée un objet Model à partir des informations du fichier par défaut.
+     * @return object Model de l'API Jena.
+     * @see Model
+     */
     public Model read(){
         Model model = null ;
         try {
@@ -35,19 +55,31 @@ public class RDFModelFactory {
             try {
                 model = RDFDataMgr.loadModel(filepath, Lang.NT);
             }catch (RiotException er){
-                System.err.println("Encore!");
-                //er.printStackTrace();
+                er.printStackTrace();
             }
             e.printStackTrace();
         }
         return model;
     }
 
+    /**
+     * Crée un objet Model à partir des informations du fichier donné en paramètre.
+     * @param filepath Chemin vers le fichier.
+     * @return objet Model de l'API Jena.
+     * @see Model
+     */
     public Model read(String filepath) {
         this.filepath = filepath;
         return this.read();
     }
 
+    /**
+     * Crée un objet LggGraphs à partir de deux fichiers décrivant un graphe RDF.
+     * @param filepath1 Chemin vers le premier fichier.
+     * @param filepath2 Chemin vers le second fichier.
+     * @return objet LggGraphs
+     * @see LggGraphs
+     */
     public LggGraphs loadlgg(String filepath1, String filepath2) {
         LggGraphs rdf = new LggGraphs();
         try {
@@ -60,6 +92,14 @@ public class RDFModelFactory {
         return rdf;
     }
 
+    /**
+     * Initialise les attributs de l'objet RDFComputation.
+     * @param rdf Objet de type RDFComputation.
+     * @param fileName Chemin vers un fichier décrivant un graphe.
+     * @param number Numéro des attributs à initialiser.
+     * @throws IOException Exceptions générées lors d'erreurs de chargments du fichier.
+     * @see RDFComputation
+     */
     private void load(RDFComputation rdf, final String fileName, int number) throws IOException {
         ArrayList<String> vars;
         Model query;
@@ -326,11 +366,21 @@ public class RDFModelFactory {
         ips.close();
     }
 
+    /**
+     * Retourne le préfixe d'une URI.
+     * @param ligne chaîne de caratère.
+     * @return Préfixe d'une URI.
+     */
     private String getprefx(final String ligne) {
         final String[] ss = ligne.split(":");
         return ss[0];
     }
 
+    /**
+     * Retourne la propriété de l'URI.
+     * @param ligne Chaine de caractère.
+     * @return Propriété de l'URI.
+     */
     private String getname(final String ligne) {
         final String[] ss = ligne.split(":");
         return ss[1];

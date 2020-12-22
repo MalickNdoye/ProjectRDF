@@ -7,17 +7,61 @@ import tools.DefaultParameter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class RDFComputation {
+
+/**
+ * RDFComputation est la classe qui généralise toutes les classes de traitement et calcul.
+ *
+ * <p>
+ *  Les attributs nécessaires aux traitements sont :
+ * <ul>
+ * <li>Deux graphes RDF.</li>
+ * <li>Ensembles regroupant les entêtes de requêtes.</li>
+ * <li>Ensembles des noeuds anonymes.</li>
+ * <li>Ensemble des préfixes d'URI.</li>
+ * </ul>
+ * </p>
+ * <p>
+ * De plus, un Zéro a une liste d'amis Zéro. Le membre pourra ajouter ou enlever
+ * des amis à cette liste.
+ * </p>
+ * @version 1.0.0
+ */
+public abstract class RDFComputation {
     //RDF Graphs
+    /**
+     * Object Model du graphe 1.
+     */
     protected Model query1;
+    /**
+     * Object Model du graphe 2.
+     */
     protected Model query2;
+    /**
+     * Object Model du graphe des points communs.
+     */
     protected Model resultProd;
+    /**
+     * Liste des entêtes de requêtes du graphe 1.
+     */
     protected ArrayList<String> vars1; // should contain head variables of query1 but query1 is a graph
+    /**
+     * Liste des entêtes de requêtes du graphe 2.
+     */
     protected ArrayList<String> vars2; // should contain head variables of query2 but query2 is a graph
+    /**
+     * Dictionaires des noeuds anonymes.
+     */
     protected HashMap<String, String> blanknodes;
+    /**
+     * Dictionnaires des préfixes.
+     */
     protected HashMap<String, String> prefixs;
 
 
+    /**
+     * Constructeur par defaut.
+     * Elle initialise tous les attibuts et les graphes sont vides.
+     */
     public RDFComputation() {
         query1 = ModelFactory.createDefaultModel();
         query2 = ModelFactory.createDefaultModel();
@@ -28,6 +72,11 @@ public class RDFComputation {
         blanknodes = new HashMap<>();
     }
 
+    /**
+     * Constructeur avec des objets Model déjà initialisés.
+     * @param query1 Model du graphe 1.
+     * @param query2 Model du graphe 2.
+     */
     public RDFComputation(Model query1, Model query2) {
         this.query1 = query1;
         this.query2 = query2;
@@ -40,6 +89,10 @@ public class RDFComputation {
 
     }
 
+    /**
+     * Calcule le graphe des points communs.
+     * @return Objet Model du graphe des points communs.
+     */
     public Model productGraph() {
         resultProd = ModelFactory.createDefaultModel();
         DictionaryNode dictionaryBN = DictionaryNode.getInstance(DefaultParameter.dictionaryPathUsed);
@@ -78,6 +131,10 @@ public class RDFComputation {
         return resultProd;
     }
 
+    /**
+     * Charge les attributs liés au graphe indiqué.
+     * @param number Numéro du graphe dont les attributs sont chargés.
+     */
     private void loadAttributes(int number) {
         ArrayList<String> vars = null;
         Model query = null;
@@ -166,30 +223,63 @@ public class RDFComputation {
 
     }
 
+    /**
+     * Determine si un URI est une entête de requête ou non.
+     * @param s URI.
+     * @return True si c'est une entête, False sinon.
+     */
     public boolean isNotVars(String s) {
         return s.charAt(0) != 'y' && s.charAt(0) != '?';
     }
 
+    /**
+     * Retourne la liste des entêtes du graphe 1.
+     * @return Liste des entêtes du graphe 1.
+     * @see #vars1
+     */
+    public ArrayList<String> getVars1() {
+        return vars1;
+    }
+    
+    /**
+     * Retourne la liste des entêtes du graphe 2.
+     * @return Liste des entêtes du graphe 2.
+     * @see #vars2
+     */
     public ArrayList<String> getVars2() {
         return vars2;
     }
 
-    public ArrayList<String> getVars1() {
-        return vars1;
-    }
-
+    /**
+     * Retourne l'objet Model du graphe 1.
+     * @return Objet Model du graphe 1.
+     * @see #query1
+     */
     public Model getQuery1() {
         return query1;
     }
 
+    /**
+     * Retourne l'objet Model du graphe 2.
+     * @return Objet Model du graphe 2.
+     * @see #query2
+     */
     public Model getQuery2() {
         return query2;
     }
 
+    /**
+     * Retourne le dictionnaire des préfixes.
+     * @return Dictionaire des préfixes.
+     */
     public HashMap<String, String> getPrefixs() {
         return prefixs;
     }
 
+    /**
+     * Retourne le dictionnaire des noeuds anonymes.
+     * @return Dictionnaire des noeuds anonymes.
+     */
     public HashMap<String, String> getBlanknodes() {
         return blanknodes;
     }
