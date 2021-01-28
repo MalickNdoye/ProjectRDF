@@ -36,6 +36,10 @@ public class DictionaryNode {
         dictionaryBN = csvIO.load();
     }
 
+    public int size() {
+        return dictionaryBN.size() ;
+    }
+
     /**
      *  Singleton Holder.
      */

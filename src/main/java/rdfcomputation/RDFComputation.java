@@ -284,4 +284,9 @@ public abstract class RDFComputation {
         return blanknodes;
     }
 
+    public Model getResultProd(){ return resultProd; }
+
+    public abstract boolean lggQueryexists() ;
+
+    public abstract void writelgg() ;
 }

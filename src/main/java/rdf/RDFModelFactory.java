@@ -80,7 +80,7 @@ public class RDFModelFactory {
      * @return objet LggGraphs
      * @see LggGraphs
      */
-    public LggGraphs loadlgg(String filepath1, String filepath2) {
+    public RDFComputation loadlgg(String filepath1, String filepath2) {
         LggGraphs rdf = new LggGraphs();
         try {
             this.load(rdf, filepath1, 1);

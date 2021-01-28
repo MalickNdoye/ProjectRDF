@@ -94,6 +94,10 @@ public class LggGraphs extends RDFComputation{
         }
     }
 
+    @Override
+    public boolean lggQueryexists() {
+        return false;
+    }
 
     @Override
     public String toString() {
