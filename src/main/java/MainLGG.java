@@ -42,7 +42,7 @@ public class MainLGG {
                 .desc(DefaultParameter.infoArgumentDesc).optionalArg(true).build();
         Option option_o = Option.builder("o").argName("output").hasArg()
                 .desc(DefaultParameter.outputArgumentDesc).optionalArg(true).build();
-        Option option_q = Option.builder("g").argName("modeQuery").hasArg().valueSeparator(' ')
+        Option option_q = Option.builder("q").argName("modeQuery").hasArg().valueSeparator(' ')
                 .desc(DefaultParameter.graphArgumentDesc).required().optionalArg(true).build();
 
         Options options = new Options();
