@@ -39,6 +39,7 @@ public class CSVFileIO extends RDFFileIO {
         PrintWriter writerDic;
         Set<String> listKeys;
         try {
+            filepath = dictionaryBN.getDictionaryPath();
             writerDic = new PrintWriter(new FileWriter(filepath));
             listKeys = dictionaryBN.keySet();
             for (String key : listKeys) {

@@ -8,6 +8,7 @@ import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RiotException;
 import rdfcomputation.LggGraphs;
+import rdfcomputation.LggQueries;
 import rdfcomputation.RDFComputation;
 
 import java.io.*;
@@ -80,11 +81,23 @@ public class RDFModelFactory {
      * @return objet LggGraphs
      * @see LggGraphs
      */
-    public RDFComputation loadlgg(String filepath1, String filepath2) {
+    public LggGraphs loadGraphs(String filepath1, String filepath2) {
         LggGraphs rdf = new LggGraphs();
         try {
-            this.load(rdf, filepath1, 1);
-            this.load(rdf, filepath2, 2);
+            this.loadlgg(rdf, filepath1, 1);
+            this.loadlgg(rdf, filepath2, 2);
+            return rdf;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return rdf;
+    }
+
+    public LggQueries loadQueries(String filepath1, String filepath2) {
+        LggQueries rdf = new LggQueries();
+        try {
+            this.loadlgg(rdf, filepath1, 1);
+            this.loadlgg(rdf, filepath2, 2);
             return rdf;
         } catch (IOException e) {
             e.printStackTrace();
@@ -100,7 +113,7 @@ public class RDFModelFactory {
      * @throws IOException Exceptions générées lors d'erreurs de chargments du fichier.
      * @see RDFComputation
      */
-    private void load(RDFComputation rdf, final String fileName, int number) throws IOException {
+    private void loadlgg(RDFComputation rdf, final String fileName, int number) throws IOException {
         ArrayList<String> vars;
         Model query;
         switch (number) {

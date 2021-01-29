@@ -1,8 +1,10 @@
 package rdfcomputation;
 
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.rdf.model.StmtIterator;
+import rdf.DictionaryNode;
 import tools.DefaultParameter;
 
 import java.io.FileWriter;
@@ -29,6 +31,48 @@ public class LggGraphs extends RDFComputation{
      */
     public LggGraphs(Model query1,Model query2){
         super(query1, query2);
+    }
+
+    /**
+     * Calcule le graphe des points communs.
+     * @return Objet Model du graphe des points communs.
+     */
+    public Model productGraph() {
+        resultProd = ModelFactory.createDefaultModel();
+        DictionaryNode dictionaryBN = DictionaryNode.getInstance(DefaultParameter.dictionaryPathUsed);
+        for(Statement stmt1 : query1.listStatements().toList()){
+            dictionaryBN.update(stmt1.getSubject().toString());
+            dictionaryBN.update(stmt1.getObject().toString());
+            for(Statement stmt2 : query2.listStatements().toList()){
+                dictionaryBN.update(stmt2.getSubject().toString());
+                dictionaryBN.update(stmt2.getObject().toString());
+                if (stmt1.getPredicate().equals(stmt2.getPredicate())) {
+                    if (stmt1.getSubject().equals(stmt2.getSubject()) && this.isNotVars(stmt1.getSubject().toString())) {
+                        if (stmt1.getObject().equals(stmt2.getObject()) && this.isNotVars(stmt1.getObject().toString())) {
+                            resultProd.add(stmt1);
+                        } else {
+                            String var1 = String.format("v__%d__%d", dictionaryBN.get(stmt1.getObject().toString()),
+                                    dictionaryBN.get(stmt2.getObject().toString()));
+                            resultProd.add(stmt1.getSubject(), stmt1.getPredicate(), resultProd.createResource(var1));
+                        }
+                    } else {
+                        String var1 = String.format("v__%d__%d",
+                                dictionaryBN.get(stmt1.getSubject().toString()),
+                                dictionaryBN.get(stmt2.getSubject().toString()));
+                        if (stmt1.getObject().equals(stmt2.getObject()) && this.isNotVars(stmt1.getObject().toString())) {
+                            resultProd.add(resultProd.createResource(var1), stmt1.getPredicate(), stmt1.getObject());
+                        } else {
+                            String var2 = String.format("v__%d__%d", dictionaryBN.get(stmt1.getObject().toString()),
+                                    dictionaryBN.get(stmt2.getObject().toString()));
+                            resultProd.add(resultProd.createResource(var1), stmt1.getPredicate(),
+                                    resultProd.createResource(var2));
+                        }
+                    }
+                }
+            }
+        }
+        dictionaryBN.save();
+        return resultProd;
     }
 
     /**
@@ -103,4 +147,6 @@ public class LggGraphs extends RDFComputation{
     public String toString() {
         return super.toString();
     }
+
+
 }

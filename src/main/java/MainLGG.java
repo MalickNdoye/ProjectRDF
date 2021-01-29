@@ -2,6 +2,7 @@ import org.apache.commons.cli.*;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.riot.Lang;
+import rdf.DictionaryNode;
 import rdf.RDFModelFactory;
 import rdfcomputation.LggGraphs;
 import rdfcomputation.LggQueries;
@@ -36,14 +37,14 @@ public class MainLGG {
         Option option_f = Option.builder("f").argName("input").hasArgs().valueSeparator(' ')
                 .desc(DefaultParameter.graphArgumentDesc).required().optionalArg(true).build();
         Option option_g = Option.builder("g").argName("modeGraph").hasArg().valueSeparator(' ')
-                .desc(DefaultParameter.graphArgumentDesc).required().optionalArg(true).build();
+                .desc(DefaultParameter.graphArgumentDesc).optionalArg(true).build();
         Option option_h = Option.builder("h").argName("help").longOpt("help").desc(DefaultParameter.helpDesc).build();
         Option option_i = Option.builder("i").argName("info").hasArg()
                 .desc(DefaultParameter.infoArgumentDesc).optionalArg(true).build();
         Option option_o = Option.builder("o").argName("output").hasArg()
                 .desc(DefaultParameter.outputArgumentDesc).optionalArg(true).build();
         Option option_q = Option.builder("q").argName("modeQuery").hasArg().valueSeparator(' ')
-                .desc(DefaultParameter.graphArgumentDesc).required().optionalArg(true).build();
+                .desc(DefaultParameter.graphArgumentDesc).optionalArg(true).build();
 
         Options options = new Options();
         CommandLineParser parser = new DefaultParser();
@@ -65,6 +66,9 @@ public class MainLGG {
 
             if (commandLine.hasOption("d")) {
                 DefaultParameter.dictionaryPathUsed = commandLine.getOptionValue("d");
+                DictionaryNode.getInstance().setDictionaryPath(DefaultParameter.dictionaryPathUsed) ;
+            }else {
+                DictionaryNode.getInstance().setDictionaryPath(DefaultParameter.dictionaryPath) ;
             }
 
             if (commandLine.hasOption("i")) {
@@ -81,7 +85,7 @@ public class MainLGG {
             }
 
             if (commandLine.hasOption("f")) {
-                String[] remainder = commandLine.getOptionValues("g");
+                String[] remainder = commandLine.getOptionValues("f");
                 if (remainder.length == 2) {
                     DefaultParameter.graphPath1 = remainder[0];
                     DefaultParameter.graphPath2 = remainder[1];
@@ -145,16 +149,16 @@ public class MainLGG {
         RDFModelFactory modelFactory = new RDFModelFactory();
 
         RDFComputation lgg = null ;
-        LggGraphs lggGraphs ;
-        LggQueries lggQueries ;
+        LggGraphs lggGraphs = null;
+        LggQueries lggQueries = null ;
 
         if (mode == LggMode.LGG_GRAPH_MODE) {
-            lggGraphs = (LggGraphs) modelFactory.loadlgg(DefaultParameter.graphPath1,
+            lggGraphs = modelFactory.loadGraphs(DefaultParameter.graphPath1,
                     DefaultParameter.graphPath2);
             lgg = lggGraphs ;
         }
         if (mode == LggMode.LGG_QUERY_MODE) {
-            lggQueries = (LggQueries) modelFactory.loadlgg(DefaultParameter.graphPath1,
+            lggQueries = modelFactory.loadQueries(DefaultParameter.graphPath1,
                     DefaultParameter.graphPath2);
             lgg = lggQueries ;
         }
@@ -165,25 +169,28 @@ public class MainLGG {
                 long timeProd = 0L;
                 for (int i = 0; i < 5; ++i) {
                     long start = System.nanoTime();
-                    resultat = lgg.productGraph();
+                    if (lgg instanceof LggGraphs) {
+                        resultat = lggGraphs.productGraph();
+                    } else {
+                        resultat = lggQueries.product();
+                    }
                     timeProd += System.nanoTime() - start;
                 }
                 timeProd /= 5L;
                 //resultat.write((OutputStream)System.out, "N-TRIPLE");
                 //System.out.println(Lang.NTRIPLES.getLabel());
                 resultat.write(System.out, Lang.NTRIPLES.getLabel());
-                CSVFileIO csvFileIO = new CSVFileIO(DefaultParameter.dictionaryPathUsed);
+                CSVFileIO csvFileIO = new CSVFileIO(DefaultParameter.infoPathUsed);
                 if (!csvFileIO.checkFile()) {
                     System.err.println("Le fichier " + DefaultParameter.infoPathUsed + " n'existe pas");
                     return;
                 }
                 csvFileIO.writeInfo(resultat.size(), timeProd);
                 System.out.println("Writing ...");
-                lgg.writelgg();
-                System.out.println("End");
-                if (lgg.lggQueryexists()) {
+                if (lgg.lggQueryexists() || lgg instanceof LggGraphs) {
                     lgg.writelgg();
                 }
+                System.out.println("End");
             } else {
                 System.out.println();
             }

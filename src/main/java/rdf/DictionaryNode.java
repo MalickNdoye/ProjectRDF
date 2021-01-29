@@ -40,6 +40,10 @@ public class DictionaryNode {
         return dictionaryBN.size() ;
     }
 
+    public void setDictionaryPath(String dictionaryPath) {
+        DictionaryNode.dictionaryPath = dictionaryPath ;
+    }
+
     /**
      *  Singleton Holder.
      */
@@ -100,15 +104,12 @@ public class DictionaryNode {
      * Met à jour le dictionaire en ajoutant l'URI ou le noeud anonyme s'il n'est pas
      * encore présent dans le dictionaire.
      * @param uri URI ou noeud anonyme.
-     * @return True si le nouvel ajout est fait et False sinon.
      */
-    public synchronized Boolean update(String uri){
+    public synchronized void update(String uri){
         if(dictionaryBN == null) dictionaryBN = new HashMap<>();
         if (!dictionaryBN.containsKey(uri)) {
             dictionaryBN.put(uri, dictionaryBN.size()+1);
-            return true;
         }
-        return false ;
     }
 
 

@@ -1,9 +1,6 @@
 package rdfcomputation;
 
 import org.apache.jena.rdf.model.*;
-import rdf.DictionaryNode;
-import tools.DefaultParameter;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -26,7 +23,7 @@ import java.util.HashMap;
  * </p>
  * @version 1.0.0
  */
-public abstract class RDFComputation {
+public class RDFComputation {
     //RDF Graphs
     /**
      * Object Model du graphe 1.
@@ -89,47 +86,6 @@ public abstract class RDFComputation {
 
     }
 
-    /**
-     * Calcule le graphe des points communs.
-     * @return Objet Model du graphe des points communs.
-     */
-    public Model productGraph() {
-        resultProd = ModelFactory.createDefaultModel();
-        DictionaryNode dictionaryBN = DictionaryNode.getInstance(DefaultParameter.dictionaryPathUsed);
-        for(Statement stmt1 : query1.listStatements().toList()){
-            dictionaryBN.update(stmt1.getSubject().toString());
-            dictionaryBN.update(stmt1.getObject().toString());
-            for(Statement stmt2 : query2.listStatements().toList()){
-                dictionaryBN.update(stmt2.getSubject().toString());
-                dictionaryBN.update(stmt2.getObject().toString());
-                if (stmt1.getPredicate().equals(stmt2.getPredicate())) {
-                    if (stmt1.getSubject().equals(stmt2.getSubject()) && this.isNotVars(stmt1.getSubject().toString())) {
-                        if (stmt1.getObject().equals(stmt2.getObject()) && this.isNotVars(stmt1.getObject().toString())) {
-                            resultProd.add(stmt1);
-                        } else {
-                            String var1 = String.format("v__%d__%d", dictionaryBN.get(stmt1.getObject().toString()),
-                                    dictionaryBN.get(stmt2.getObject().toString()));
-                            resultProd.add(stmt1.getSubject(), stmt1.getPredicate(), resultProd.createResource(var1));
-                        }
-                    } else {
-                        String var1 = String.format("v__%d__%d",
-                                dictionaryBN.get(stmt1.getSubject().toString()),
-                                dictionaryBN.get(stmt2.getSubject().toString()));
-                        if (stmt1.getObject().equals(stmt2.getObject()) && this.isNotVars(stmt1.getObject().toString())) {
-                            resultProd.add(resultProd.createResource(var1), stmt1.getPredicate(), stmt1.getObject());
-                        } else {
-                            String var2 = String.format("v__%d__%d", dictionaryBN.get(stmt1.getObject().toString()),
-                                    dictionaryBN.get(stmt2.getObject().toString()));
-                            resultProd.add(resultProd.createResource(var1), stmt1.getPredicate(),
-                                    resultProd.createResource(var2));
-                        }
-                    }
-                }
-            }
-        }
-        dictionaryBN.save();
-        return resultProd;
-    }
 
     /**
      * Charge les attributs liés au graphe indiqué.
@@ -286,7 +242,10 @@ public abstract class RDFComputation {
 
     public Model getResultProd(){ return resultProd; }
 
-    public abstract boolean lggQueryexists() ;
+    public boolean lggQueryexists() {
+        return false ;
+    }
 
-    public abstract void writelgg() ;
+    public void writelgg() {}
+
 }
