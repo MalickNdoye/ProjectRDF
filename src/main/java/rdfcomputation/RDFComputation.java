@@ -242,10 +242,6 @@ public class RDFComputation {
 
     public Model getResultProd(){ return resultProd; }
 
-    public boolean lggQueryexists() {
-        return false ;
-    }
-
     public void writelgg() {}
 
 }

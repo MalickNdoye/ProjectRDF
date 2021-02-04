@@ -6,11 +6,12 @@ import rdf.DictionaryNode;
 import rdf.RDFModelFactory;
 import rdfcomputation.LggGraphs;
 import rdfcomputation.LggQueries;
-import rdfcomputation.RDFComputation;
 import rdfio.CSVFileIO;
+import rdfio.SPARQLFileIO;
 import tools.DefaultParameter;
 import tools.LggMode;
 
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -89,10 +90,17 @@ public class MainLGG {
                 if (remainder.length == 2) {
                     DefaultParameter.graphPath1 = remainder[0];
                     DefaultParameter.graphPath2 = remainder[1];
-                    DefaultParameter.graphResult = DefaultParameter.outputDirectoryUsed + "/Lgg" +
-                            DefaultParameter.graphPath1.split("/")[DefaultParameter.graphPath1.split("/").length - 1].split("\\.")[0] +
-                            DefaultParameter.graphPath2.split("/")[DefaultParameter.graphPath2.split("/").length - 1].split("\\.")[0] +
-                            ".n3";
+                    if(commandLine.hasOption('g')) {
+                        DefaultParameter.graphResult = DefaultParameter.outputDirectoryUsed + "/Lgg" +
+                                DefaultParameter.graphPath1.split("/")[DefaultParameter.graphPath1.split("/").length - 1].split("\\.")[0] +
+                                DefaultParameter.graphPath2.split("/")[DefaultParameter.graphPath2.split("/").length - 1].split("\\.")[0] +
+                                ".n3";
+                    } else {
+                        DefaultParameter.graphResult = DefaultParameter.outputDirectoryUsed + "/Lgg" +
+                                DefaultParameter.graphPath1.split("/")[DefaultParameter.graphPath1.split("/").length - 1].split("\\.")[0] +
+                                DefaultParameter.graphPath2.split("/")[DefaultParameter.graphPath2.split("/").length - 1].split("\\.")[0] +
+                                ".sparql";
+                    }
                 } else {
                     String reason = remainder.length < 2 ? "too few arguments" : "too much arguments";
                     System.err.println("ARGUMENT ERROR : " + reason +"("+remainder.length+")");
@@ -119,6 +127,7 @@ public class MainLGG {
     public static void main(String[] args) {
         LggMode mode = LggMode.DEFAULT;
 
+        //PARSING DES ENTRÉES
         switch (parsingInput(args)) {
             case -1 :
                 System.err.println("un ou plusieurs arguments obligatoires manquants.");
@@ -146,57 +155,86 @@ public class MainLGG {
                 return;
         }
 
+        //Exécution des algorithmes
         RDFModelFactory modelFactory = new RDFModelFactory();
-
-        RDFComputation lgg = null ;
-        LggGraphs lggGraphs = null;
-        LggQueries lggQueries = null ;
-
-        if (mode == LggMode.LGG_GRAPH_MODE) {
-            lggGraphs = modelFactory.loadGraphs(DefaultParameter.graphPath1,
-                    DefaultParameter.graphPath2);
-            lgg = lggGraphs ;
+        switch (mode) {
+            case LGG_GRAPH_MODE:
+                LggGraphs lggGraphs = modelFactory.loadGraphs(DefaultParameter.graphPath1,
+                        DefaultParameter.graphPath2);
+                graphModeExecution(lggGraphs);
+                break ;
+            case LGG_QUERY_MODE:
+                LggQueries lggQueries = modelFactory.loadQueries(DefaultParameter.graphPath1,
+                        DefaultParameter.graphPath2);
+                queryModeExecution(lggQueries);
+                break ;
+            default:
+                break;
         }
-        if (mode == LggMode.LGG_QUERY_MODE) {
-            lggQueries = modelFactory.loadQueries(DefaultParameter.graphPath1,
-                    DefaultParameter.graphPath2);
-            lgg = lggQueries ;
-        }
 
-        if(mode != LggMode.INPUT_ERROR && lgg != null) {
-            if (lgg.getVars1().size() == lgg.getVars2().size()) {
-                Model resultat = ModelFactory.createDefaultModel();
-                long timeProd = 0L;
-                for (int i = 0; i < 5; ++i) {
-                    long start = System.nanoTime();
-                    if (lgg instanceof LggGraphs) {
-                        resultat = lggGraphs.productGraph();
-                    } else {
-                        resultat = lggQueries.product();
-                    }
-                    timeProd += System.nanoTime() - start;
-                }
-                timeProd /= 5L;
-                //resultat.write((OutputStream)System.out, "N-TRIPLE");
-                //System.out.println(Lang.NTRIPLES.getLabel());
-                resultat.write(System.out, Lang.NTRIPLES.getLabel());
-                CSVFileIO csvFileIO = new CSVFileIO(DefaultParameter.infoPathUsed);
-                if (!csvFileIO.checkFile()) {
-                    System.err.println("Le fichier " + DefaultParameter.infoPathUsed + " n'existe pas");
-                    return;
-                }
-                csvFileIO.writeInfo(resultat.size(), timeProd);
-                System.out.println("Writing ...");
-                if (lgg.lggQueryexists() || lgg instanceof LggGraphs) {
-                    lgg.writelgg();
-                }
-                System.out.println("End");
-            } else {
-                System.out.println();
+
+    }
+
+    private static void queryModeExecution(LggQueries lggQueries) {
+        if (lggQueries.getVars1().size() == lggQueries.getVars2().size()) {
+
+            Model resultat = ModelFactory.createDefaultModel();
+            long timeProd = 0;
+            int i=0;
+            while (i<5) {
+                long start = System.nanoTime();
+                resultat = lggQueries.product();
+                timeProd += System.nanoTime() - start;
+                i++;
             }
+
+            timeProd = timeProd/5;
+            writeInfo(resultat,timeProd);
+            resultat.write(System.out, "N-Triples");
+
+
+            if (lggQueries.lggexists()) {
+                System.out.println("An lgg exists");
+                lggQueries.writelgg();
+            }
+            else {
+                System.out.println("Lgg for these queries does not exist.");
+            }
+
+
         }
+    }
 
 
+    private static void graphModeExecution(LggGraphs lgg) {
+        if (lgg.getVars1().size() == lgg.getVars2().size()) {
+            Model resultat = ModelFactory.createDefaultModel();
+            long timeProd = 0L;
+            for (int i = 0; i < 5; ++i) {
+                long start = System.nanoTime();
+                resultat = lgg.productGraph();
+                timeProd += System.nanoTime() - start;
+            }
+            timeProd /= 5L;
+            resultat.write(System.out, Lang.NTRIPLES.getLabel());
+            writeInfo(resultat,timeProd);
+            System.out.println("Writing ...");
+            lgg.writelgg();
+            System.out.println("End");
+        } else {
+            System.out.println();
+        }
+    }
+
+    private static void writeInfo(Model resultat,long timeProd) {
+        CSVFileIO csvFileIO = new CSVFileIO(DefaultParameter.infoPathUsed);
+        if (!csvFileIO.checkFile()) {
+            System.err.println("Le fichier " + DefaultParameter.infoPathUsed + " n'existe pas");
+            return;
+        }
+        csvFileIO.writeInfo(resultat.size(), timeProd);
+        timeProd = TimeUnit.MILLISECONDS.convert(timeProd, TimeUnit.NANOSECONDS);
+        System.out.println("Graphe RDF de "+resultat.size()+" triplet(s) calculé en "+timeProd+"ms");
     }
 
 }

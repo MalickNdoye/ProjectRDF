@@ -32,159 +32,303 @@ public class LggQueries extends RDFComputation{
     }
 
     public boolean lggexists() {
-        final Map<String, String> e = new HashMap<>();
-        System.out.println("size = " + vars1.size());
-        DictionaryNode dictionaryBN = DictionaryNode.getInstance();
-        for (int j = 0; j < vars1.size(); ++j) {
-            final StmtIterator i = this.resultProd.listStatements();
-            while (i.hasNext()) {
-                final Statement s = i.nextStatement();
-                System.out.println(dictionaryBN.size() + " s=" + s.toString());
-                System.out.println("v_" + dictionaryBN.get(vars1.get(j)) + "_" + dictionaryBN.get(vars2.get(j)));
-                if (s.toString().contains("v_" + dictionaryBN.get(vars1.get(j)) + "_" + dictionaryBN.get(vars2.get(j)))) {
-                    e.put("v_" + dictionaryBN.get(vars1.get(j)) + "_" + dictionaryBN.get(vars2.get(j)), "true");
-                    break;
+        Map<String, String> e = new HashMap<String, String>();
+        System.out.print("heads anti-unification: ");
+        for (int j=0; j<getVars1().size(); j++) {
+            for (StmtIterator i = resultProd.listStatements(); i.hasNext(); ) {
+                Statement s = i.nextStatement();
+                if (s.toString().contains("v_y"+getVars1().get(j)+"_y"+getVars2().get(j))) {
+                    e.put("v_y"+getVars1().get(j)+"_y"+getVars2().get(j), "true");break;
                 }
-                e.put("v_" + dictionaryBN.get(vars1.get(j)) + "_" + dictionaryBN.get(vars2.get(j)), "false");
+                else {
+                    e.put("v_y"+getVars1().get(j)+"_y"+getVars2().get(j), "false");
+                }
             }
         }
-        return !e.containsValue("false");
+        System.out.println(e.toString());
+        if (e.containsValue("false"))
+            return false;
+        else
+            return true;
     }
 
 
     public void writelgg() {
-        String filepath = DefaultParameter.outputDirectoryUsed + "/Lgg" +
-                DefaultParameter.graphPath1.split("/")[DefaultParameter.graphPath1.split("/").length - 1].substring(0, DefaultParameter.graphPath1.split("/")[DefaultParameter.graphPath1.split("/").length - 1].length() - 4) + DefaultParameter.graphPath2.split("/")[DefaultParameter.graphPath2.split("/").length - 1].substring(0, DefaultParameter.graphPath2.split("/")[DefaultParameter.graphPath2.split("/").length - 1].length() - 4)
-                + ".sparql" ;
         SPARQLFileIO sparqlFileIO = new SPARQLFileIO(this);
-        sparqlFileIO.save(filepath);
+        sparqlFileIO.save(DefaultParameter.graphResult);
     }
 
-
-    @Override
-    public boolean lggQueryexists() {
-        return this.lggexists() ;
-    }
 
     public Model product() {
-        DictionaryNode dictionaryBN = DictionaryNode.getInstance();
-        this.resultProd = ModelFactory.createDefaultModel();
-        int varstmt2 ;
-        final StmtIterator i = query1.listStatements();
-        while (i.hasNext()) {
-            final Statement stmt1 = i.nextStatement();
-            final StmtIterator j = query2.listStatements();
-            while (j.hasNext()) {
-                final Statement stmt2 = j.nextStatement();
-                if (stmt1.getSubject().equals(stmt2.getSubject()) && !this.isVars(stmt1.getSubject().toString())) {
-                    if (stmt1.getPredicate().equals(stmt2.getPredicate()) && !this.isVars(stmt1.getPredicate().toString())) {
-                        if (stmt1.getObject().equals(stmt2.getObject()) && !this.isVars(stmt1.getObject().toString())) {
-                            this.resultProd.add(stmt1);
+        resultProd = ModelFactory.createDefaultModel();
+        String var1, var2, var3 = "";
+        for (StmtIterator i = query1.listStatements(); i.hasNext(); ) {
+            Statement stmt1 = i.nextStatement();
+            for (StmtIterator j = query2.listStatements(); j.hasNext(); ) {
+                Statement stmt2 = j.nextStatement();
+                if (stmt1.getSubject().equals(stmt2.getSubject()) && (!isVars(stmt1.getSubject().toString()))) {
+                    if (stmt1.getPredicate().equals(stmt2.getPredicate()) && (!isVars(stmt1.getPredicate().toString()))) {
+                        if (stmt1.getObject().equals(stmt2.getObject()) && (!isVars(stmt1.getObject().toString()))) {
+                            resultProd.add(stmt1);
                         }
                         else {
-                            dictionaryBN.update(stmt1.getObject().toString());
-                            dictionaryBN.update(stmt2.getObject().toString());
-                            final int varstmt3 = dictionaryBN.get(stmt1.getObject().toString());
-                            varstmt2 = dictionaryBN.get(stmt2.getObject().toString());
-                            final String var1 = "v_" + varstmt3 + "_" + varstmt2;
-                            final Resource rs = this.resultProd.createResource(var1);
-                            this.resultProd.add(stmt1.getSubject(), stmt1.getPredicate(), rs);
+                            if (stmt1.getObject().toString().contains("#")) {
+                                if (stmt2.getObject().toString().contains("#"))
+                                    var1 = "v_"+stmt1.getObject().toString().split("#")[1]+"_"+stmt2.getObject().toString().split("#")[1];
+                                else if (stmt2.getObject().toString().contains("://"))
+                                    var1 = "v_"+stmt1.getObject().toString().split("#")[1]+"_"+stmt2.getObject().toString().split("://")[1];
+                                else
+                                    var1 = "v_"+stmt1.getObject().toString().split("#")[1]+"_"+stmt2.getObject();
+                            }
+                            else if (stmt1.getObject().toString().contains("://")){
+                                if (stmt2.getObject().toString().contains("#"))
+                                    var1 = "v_"+stmt1.getObject().toString().split("://")[1]+"_"+stmt2.getObject().toString().split("#")[1];
+                                else if (stmt2.getObject().toString().contains("://"))
+                                    var1 = "v_"+stmt1.getObject().toString().split("://")[1]+"_"+stmt2.getObject().toString().split("://")[1];
+                                else
+                                    var1 = "v_"+stmt1.getObject().toString().split("://")[1]+"_"+stmt2.getObject();
+                            }
+                            else {
+                                if (stmt2.getObject().toString().contains("#"))
+                                    var1 = "v_"+stmt1.getObject()+"_"+stmt2.getObject().toString().split("#")[1];
+                                else if (stmt2.getObject().toString().contains("://"))
+                                    var1 = "v_"+stmt1.getObject()+"_"+stmt2.getObject().toString().split("://")[1];
+                                else
+                                    var1 = "v_"+stmt1.getObject()+"_"+stmt2.getObject();
+                            }
+                            Resource rs = resultProd.createResource(var1);
+                            resultProd.add(stmt1.getSubject(), stmt1.getPredicate(), rs);
                         }
                     }
-                    else if (stmt1.getObject().equals(stmt2.getObject()) && !this.isVars(stmt1.getObject().toString())) {
-                        dictionaryBN.update(stmt1.getPredicate().toString());
-                        dictionaryBN.update(stmt2.getPredicate().toString());
-                        final int varstmt3 = dictionaryBN.get(stmt1.getPredicate().toString());
-                        varstmt2 = dictionaryBN.get(stmt2.getPredicate().toString());
-                        final String var2 = "v_" + varstmt3 + "_" + varstmt2;
-                        final Property pr = this.resultProd.createProperty(var2);
-                        this.resultProd.add(stmt1.getSubject(), pr, stmt1.getObject());
-                        System.out.println(stmt1.getSubject().toString() + " var? " + this.isVars(stmt1.getSubject().toString()));
-                    }
                     else {
-                        dictionaryBN.update(stmt1.getObject().toString());
-                        dictionaryBN.update(stmt2.getObject().toString());
-                        int varstmt3 = dictionaryBN.get(stmt1.getObject().toString());
-                        varstmt2 = dictionaryBN.get(stmt2.getObject().toString());
-                        final String var1 = "v_" + varstmt3 + "_" + varstmt2;
-                        dictionaryBN.update(stmt1.getPredicate().toString());
-                        dictionaryBN.update(stmt2.getPredicate().toString());
-                        varstmt3 = dictionaryBN.get(stmt1.getPredicate().toString());
-                        varstmt2 = dictionaryBN.get(stmt2.getPredicate().toString());
-                        final String var2 = "v_" + varstmt3 + "_" + varstmt2;
-                        final Resource rs = this.resultProd.createResource(var1);
-                        final Property pr2 = this.resultProd.createProperty(var2);
-                        this.resultProd.add(stmt1.getSubject(), pr2, rs);
+                        if (stmt1.getObject().equals(stmt2.getObject()) && (!isVars(stmt1.getObject().toString()))) {
+                            if (stmt1.getPredicate().toString().contains("#")) {
+                                if (stmt2.getPredicate().toString().contains("#"))
+                                    var2 = "v_"+stmt1.getPredicate().toString().split("#")[1]+"_"+stmt2.getPredicate().toString().split("#")[1];
+                                else if (stmt2.getPredicate().toString().contains("://"))
+                                    var2 = "v_"+stmt1.getPredicate().toString().split("#")[1]+"_"+stmt2.getPredicate().toString().split("://")[1];
+                                else
+                                    var2 = "v_"+stmt1.getPredicate().toString().split("#")[1]+"_"+stmt2.getPredicate();
+                            }
+                            else if (stmt1.getPredicate().toString().contains("://")){
+                                if (stmt2.getPredicate().toString().contains("#"))
+                                    var2 = "v_"+stmt1.getPredicate().toString().split("://")[1]+"_"+stmt2.getPredicate().toString().split("#")[1];
+                                else if (stmt2.getPredicate().toString().contains("://"))
+                                    var2 = "v_"+stmt1.getPredicate().toString().split("://")[1]+"_"+stmt2.getPredicate().toString().split("://")[1];
+                                else
+                                    var2 = "v_"+stmt1.getPredicate().toString().split("://")[1]+"_"+stmt2.getPredicate();
+                            }
+                            else {
+                                if (stmt2.getPredicate().toString().contains("#"))
+                                    var2 = "v_"+stmt1.getPredicate()+"_"+stmt2.getPredicate().toString().split("#")[1];
+                                else if (stmt2.getPredicate().toString().contains(":"))
+                                    var2 = "v_"+stmt1.getPredicate()+"_"+stmt2.getPredicate().toString().split(":")[1];
+                                else
+                                    var2 = "v_"+stmt1.getPredicate()+"_"+stmt2.getPredicate();
+                            }
+                            Property pr = resultProd.createProperty(var2);
+                            resultProd.add(stmt1.getSubject(), pr, stmt1.getObject());
+                        }
+                        else {
+                            if (stmt1.getObject().toString().contains("#")) {
+                                if (stmt2.getObject().toString().contains("#"))
+                                    var1 = "v_"+stmt1.getObject().toString().split("#")[1]+"_"+stmt2.getObject().toString().split("#")[1];
+                                else if (stmt2.getObject().toString().contains("://"))
+                                    var1 = "v_"+stmt1.getObject().toString().split("#")[1]+"_"+stmt2.getObject().toString().split("://")[1];
+                                else
+                                    var1 = "v_"+stmt1.getObject().toString().split("#")[1]+"_"+stmt2.getObject();
+                            }
+                            else if (stmt1.getObject().toString().contains("://")) {
+                                if (stmt2.getObject().toString().contains("#"))
+                                    var1 = "v_"+stmt1.getObject().toString().split("://")[1]+"_"+stmt2.getObject().toString().split("#")[1];
+                                else if (stmt2.getObject().toString().contains("://"))
+                                    var1 = "v_"+stmt1.getObject().toString().split("://")[1]+"_"+stmt2.getObject().toString().split("://")[1];
+                                else
+                                    var1 = "v_"+stmt1.getObject().toString().split("://")[1]+"_"+stmt2.getObject();
+                            }
+                            else {
+                                if (stmt2.getObject().toString().contains("#"))
+                                    var1 = "v_"+stmt1.getObject()+"_"+stmt2.getObject().toString().split("#")[1];
+                                else if (stmt2.getObject().toString().contains("://"))
+                                    var1 = "v_"+stmt1.getObject()+"_"+stmt2.getObject().toString().split(":")[1];
+                                else
+                                    var1 = "v_"+stmt1.getObject()+"_"+stmt2.getObject();
+                            }
+
+                            if (stmt1.getPredicate().toString().contains("#")) {
+                                if (stmt2.getPredicate().toString().contains("#"))
+                                    var2 = "v_"+stmt1.getPredicate().toString().split("#")[1]+"_"+stmt2.getPredicate().toString().split("#")[1];
+                                else
+                                    var2 = "v_"+stmt1.getPredicate().toString().split("#")[1]+"_"+stmt2.getPredicate();
+                            }
+                            else {
+                                if (stmt2.getPredicate().toString().contains("#"))
+                                    var2 = "v_"+stmt1.getPredicate()+"_"+stmt2.getPredicate().toString().split("#")[1];
+                                else
+                                    var2 = "v_"+stmt1.getPredicate()+"_"+stmt2.getPredicate();
+                            }
+                            Resource rs = resultProd.createResource(var1);
+                            Property pr = resultProd.createProperty(var2);
+                            resultProd.add(stmt1.getSubject(), pr, rs);
+                        }
                     }
-                }
-                else if (stmt1.getPredicate().equals(stmt2.getPredicate()) && !this.isVars(stmt1.getPredicate().toString())) {
-                    if (stmt1.getObject().equals(stmt2.getObject()) && !this.isVars(stmt1.getObject().toString())) {
-                        dictionaryBN.update(stmt1.getSubject().toString());
-                        dictionaryBN.update(stmt2.getSubject().toString());
-                        final int varstmt3 = dictionaryBN.get(stmt1.getSubject().toString());
-                        varstmt2 = dictionaryBN.get(stmt2.getSubject().toString());
-                        final String var1 = "v_" + varstmt3 + "_" + varstmt2;
-                        final Resource rs = this.resultProd.createResource(var1);
-                        this.resultProd.add(rs, stmt1.getPredicate(), stmt1.getObject());
-                    }
-                    else {
-                        dictionaryBN.update(stmt1.getSubject().toString());
-                        dictionaryBN.update(stmt2.getSubject().toString());
-                        int varstmt3 = dictionaryBN.get(stmt1.getSubject().toString());
-                        varstmt2 = dictionaryBN.get(stmt2.getSubject().toString());
-                        final String var1 = "v_" + varstmt3 + "_" + varstmt2;
-                        dictionaryBN.update(stmt1.getObject().toString());
-                        dictionaryBN.update(stmt2.getObject().toString());
-                        varstmt3 = dictionaryBN.get(stmt1.getObject().toString());
-                        varstmt2 = dictionaryBN.get(stmt2.getObject().toString());
-                        final String var2 = "v_" + varstmt3 + "_" + varstmt2;
-                        System.out.println("*** " + stmt1.getObject().toString());
-                        final Resource rs2 = this.resultProd.createResource(var1);
-                        final Resource rs3 = this.resultProd.createResource(var2);
-                        this.resultProd.add(rs2, stmt1.getPredicate(), rs3);
-                        System.out.println("5*** = " + rs2.toString() + " " + stmt1.getPredicate().toString() + " " + rs3.toString());
-                    }
-                }
-                else if (stmt1.getObject().equals(stmt2.getObject()) && !this.isVars(stmt1.getObject().toString())) {
-                    dictionaryBN.update(stmt1.getSubject().toString());
-                    dictionaryBN.update(stmt2.getSubject().toString());
-                    int varstmt3 = dictionaryBN.get(stmt1.getSubject().toString());
-                    varstmt2 = dictionaryBN.get(stmt2.getSubject().toString());
-                    final String var1 = "v_" + varstmt3 + "_" + varstmt2;
-                    dictionaryBN.update(stmt1.getPredicate().toString());
-                    dictionaryBN.update(stmt2.getPredicate().toString());
-                    varstmt3 = dictionaryBN.get(stmt1.getPredicate().toString());
-                    varstmt2 = dictionaryBN.get(stmt2.getPredicate().toString());
-                    final String var2 = "v_" + varstmt3 + "_" + varstmt2;
-                    final Resource rs2 = this.resultProd.createResource(var1);
-                    final Property pr2 = this.resultProd.createProperty(var2);
-                    this.resultProd.add(rs2, pr2, stmt1.getObject());
                 }
                 else {
-                    dictionaryBN.update(stmt1.getSubject().toString());
-                    dictionaryBN.update(stmt2.getSubject().toString());
-                    int varstmt3 = dictionaryBN.get(stmt1.getSubject().toString());
-                    varstmt2 = dictionaryBN.get(stmt2.getSubject().toString());
-                    final String var1 = "v_" + varstmt3 + "_" + varstmt2;
-                    dictionaryBN.update(stmt1.getPredicate().toString());
-                    dictionaryBN.update(stmt2.getPredicate().toString());
-                    varstmt3 = dictionaryBN.get(stmt1.getPredicate().toString());
-                    varstmt2 = dictionaryBN.get(stmt2.getPredicate().toString());
-                    final String var2 = "v_" + varstmt3 + "_" + varstmt2;
-                    dictionaryBN.update(stmt1.getObject().toString());
-                    dictionaryBN.update(stmt2.getObject().toString());
-                    varstmt3 = dictionaryBN.get(stmt1.getObject().toString());
-                    varstmt2 = dictionaryBN.get(stmt2.getObject().toString());
-                    final String var3 = "v_" + varstmt3 + "_" + varstmt2;
-                    final Resource rs2 = this.resultProd.createResource(var1);
-                    final Property pr2 = this.resultProd.createProperty(var2);
-                    final Resource rs4 = this.resultProd.createResource(var3);
-                    this.resultProd.add(rs2, pr2, rs4);
+                    if (stmt1.getPredicate().equals(stmt2.getPredicate()) && (!isVars(stmt1.getPredicate().toString()))) {
+                        if (stmt1.getObject().equals(stmt2.getObject()) && (!isVars(stmt1.getObject().toString()))) {
+                            if (stmt1.getSubject().toString().contains("#")) {
+                                if (stmt2.getSubject().toString().contains("#"))
+                                    var1 = "v_"+stmt1.getSubject().toString().split("#")[1]+"_"+stmt2.getSubject().toString().split("#")[1];
+                                else
+                                    var1 = "v_"+stmt1.getSubject().toString().split("#")[1]+"_"+stmt2.getSubject();
+                            }
+                            else {
+                                if (stmt2.getSubject().toString().contains("#"))
+                                    var1 = "v_"+stmt1.getSubject()+"_"+stmt2.getSubject().toString().split("#")[1];
+                                else
+                                    var1 = "v_"+stmt1.getSubject()+"_"+stmt2.getSubject();
+                            }
+                            Resource rs = resultProd.createResource(var1);
+                            resultProd.add(rs, stmt1.getPredicate(), stmt1.getObject());
+                        }
+                        else {
+                            if (stmt1.getSubject().toString().contains("#")) {
+                                if (stmt2.getSubject().toString().contains("#"))
+                                    var1 = "v_"+stmt1.getSubject().toString().split("#")[1]+"_"+stmt2.getSubject().toString().split("#")[1];
+                                else
+                                    var1 = "v_"+stmt1.getSubject().toString().split("#")[1]+"_"+stmt2.getSubject();
+                            }
+                            else {
+                                if (stmt2.getSubject().toString().contains("#"))
+                                    var1 = "v_"+stmt1.getSubject()+"_"+stmt2.getSubject().toString().split("#")[1];
+                                else
+                                    var1 = "v_"+stmt1.getSubject()+"_"+stmt2.getSubject();
+                            }
+
+                            if (stmt1.getObject().toString().contains("#")) {
+                                if (stmt2.getObject().toString().contains("#"))
+                                    var2 = "v_"+stmt1.getObject().toString().split("#")[1]+"_"+stmt2.getObject().toString().split("#")[1];
+                                else if (stmt2.getObject().toString().contains("://"))
+                                    var2 = "v_"+stmt1.getObject().toString().split("#")[1]+"_"+stmt2.getObject().toString().split("://")[1];
+                                else
+                                    var2 = "v_"+stmt1.getObject().toString().split("#")[1]+"_"+stmt2.getObject();
+                            }
+                            else if (stmt1.getObject().toString().contains("://")){
+                                if (stmt2.getObject().toString().contains("#"))
+                                    var2 = "v_"+stmt1.getObject().toString().split("://")[1]+"_"+stmt2.getObject().toString().split("#")[1];
+                                else if (stmt2.getObject().toString().contains("://"))
+                                    var2 = "v_"+stmt1.getObject().toString().split("://")[1]+"_"+stmt2.getObject().toString().split("://")[1];
+                                else
+                                    var2 = "v_"+stmt1.getObject().toString().split("://")[1]+"_"+stmt2.getObject();
+                            }
+                            else {
+                                if (stmt2.getObject().toString().contains("#"))
+                                    var2 = "v_"+stmt1.getObject()+"_"+stmt2.getObject().toString().split("#")[1];
+                                else if (stmt2.getObject().toString().contains("://"))
+                                    var2 = "v_"+stmt1.getObject()+"_"+stmt2.getObject().toString().split("://")[1];
+                                else
+                                    var2 = "v_"+stmt1.getObject()+"_"+stmt2.getObject();
+                            }
+
+                            Resource rs1 = resultProd.createResource(var1);
+                            Resource rs2 = resultProd.createResource(var2);
+                            resultProd.add(rs1, stmt1.getPredicate(), rs2);
+                        }
+                    }
+                    else {
+                        if (stmt1.getObject().equals(stmt2.getObject()) && (!isVars(stmt1.getObject().toString()))) {
+                            if (stmt1.getSubject().toString().contains("#")) {
+                                if (stmt2.getSubject().toString().contains("#"))
+                                    var1 = "v_"+stmt1.getSubject().toString().split("#")[1]+"_"+stmt2.getSubject().toString().split("#")[1];
+                                else
+                                    var1 = "v_"+stmt1.getSubject().toString().split("#")[1]+"_"+stmt2.getSubject();
+                            }
+                            else {
+                                if (stmt2.getSubject().toString().contains("#"))
+                                    var1 = "v_"+stmt1.getSubject()+"_"+stmt2.getSubject().toString().split("#")[1];
+                                else
+                                    var1 = "v_"+stmt1.getSubject()+"_"+stmt2.getSubject();
+                            }
+
+                            if (stmt1.getPredicate().toString().contains("#")) {
+                                if (stmt2.getPredicate().toString().contains("#"))
+                                    var2 = "v_"+stmt1.getPredicate().toString().split("#")[1]+"_"+stmt2.getPredicate().toString().split("#")[1];
+                                else
+                                    var2 = "v_"+stmt1.getPredicate().toString().split("#")[1]+"_"+stmt2.getPredicate();
+                            }
+                            else {
+                                if (stmt2.getPredicate().toString().contains("#"))
+                                    var2 = "v_"+stmt1.getPredicate()+"_"+stmt2.getPredicate().toString().split("#")[1];
+                                else
+                                    var2 = "v_"+stmt1.getPredicate()+"_"+stmt2.getPredicate();
+                            }
+                            Resource rs1 = resultProd.createResource(var1);
+                            Property pr = resultProd.createProperty(var2);
+                            resultProd.add(rs1, pr, stmt1.getObject());
+                        }
+                        else {
+                            if (stmt1.getSubject().toString().contains("#")) {
+                                if (stmt2.getSubject().toString().contains("#"))
+                                    var1 = "v_"+stmt1.getSubject().toString().split("#")[1]+"_"+stmt2.getSubject().toString().split("#")[1];
+                                else
+                                    var1 = "v_"+stmt1.getSubject().toString().split("#")[1]+"_"+stmt2.getSubject();
+                            }
+                            else {
+                                if (stmt2.getSubject().toString().contains("#"))
+                                    var1 = "v_"+stmt1.getSubject()+"_"+stmt2.getSubject().toString().split("#")[1];
+                                else
+                                    var1 = "v_"+stmt1.getSubject()+"_"+stmt2.getSubject();
+                            }
+                            if (stmt1.getPredicate().toString().contains("#")) {
+                                if (stmt2.getPredicate().toString().contains("#"))
+                                    var2 = "v_"+stmt1.getPredicate().toString().split("#")[1]+"_"+stmt2.getPredicate().toString().split("#")[1];
+                                else
+                                    var2 = "v_"+stmt1.getPredicate().toString().split("#")[1]+"_"+stmt2.getPredicate();
+                            }
+                            else {
+                                if (stmt2.getPredicate().toString().contains("#"))
+                                    var2 = "v_"+stmt1.getPredicate()+"_"+stmt2.getPredicate().toString().split("#")[1];
+                                else
+                                    var2 = "v_"+stmt1.getPredicate()+"_"+stmt2.getPredicate();
+                            }
+
+                            if (stmt1.getObject().toString().contains("#")) {
+                                if (stmt2.getObject().toString().contains("#"))
+                                    var3 = "v_"+stmt1.getObject().toString().split("#")[1]+"_"+stmt2.getObject().toString().split("#")[1];
+                                else if (stmt2.getObject().toString().contains("://"))
+                                    var3 = "v_"+stmt1.getObject().toString().split("#")[1]+"_"+stmt2.getObject().toString().split("://")[1];
+                                else
+                                    var3 = "v_"+stmt1.getObject().toString().split("#")[1]+"_"+stmt2.getObject();
+                            }
+                            else if (stmt1.getObject().toString().contains("://")){
+                                if (stmt2.getObject().toString().contains("#"))
+                                    var3 = "v_"+stmt1.getObject().toString().split("://")[1]+"_"+stmt2.getObject().toString().split("#")[1];
+                                else if (stmt2.getObject().toString().contains("://"))
+                                    var3 = "v_"+stmt1.getObject().toString().split("://")[1]+"_"+stmt2.getObject().toString().split("://")[1];
+                                else
+                                    var3 = "v_"+stmt1.getObject().toString().split("://")[1]+"_"+stmt2.getObject();
+                            }
+                            else {
+                                if (stmt2.getObject().toString().contains("#"))
+                                    var3 = "v_"+stmt1.getObject()+"_"+stmt2.getObject().toString().split("#")[1];
+                                else if (stmt2.getObject().toString().contains("://"))
+                                    var3 = "v_"+stmt1.getObject()+"_"+stmt2.getObject().toString().split("://")[1];
+                                else
+                                    var3 = "v_"+stmt1.getObject()+"_"+stmt2.getObject();
+                            }
+
+                            Resource rs1 = resultProd.createResource(var1);
+                            Property pr = resultProd.createProperty(var2);
+                            Resource rs2 = resultProd.createResource(var3);
+                            resultProd.add(rs1, pr, rs2);
+                        }
+                    }
                 }
             }
+
         }
-        dictionaryBN.save();
-        return this.resultProd;
+
+        return resultProd;
     }
 
     public boolean isVars(final String s) {
