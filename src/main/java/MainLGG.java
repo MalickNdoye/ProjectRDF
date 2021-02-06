@@ -84,7 +84,7 @@ public class MainLGG {
                 .desc(DefaultParameter.dictionaryArgumentDesc).optionalArg(true).build();
         Option option_f = Option.builder("f").argName("input").hasArgs().valueSeparator(' ').numberOfArgs(2)
                 .desc(DefaultParameter.fileArgumentDesc).optionalArg(true).build();
-        Option option_g = Option.builder("g").argName("modeGraph").hasArg().valueSeparator(' ')
+        Option option_g = Option.builder("g").argName("modeGraph").hasArg(false)
                 .desc(DefaultParameter.graphModeArgumentDesc).optionalArg(true).build();
         Option option_h = Option.builder("h").argName("help").longOpt("help")
                 .desc(DefaultParameter.helpDesc).build();
@@ -92,8 +92,9 @@ public class MainLGG {
                 .desc(DefaultParameter.infoArgumentDesc).optionalArg(true).build();
         Option option_o = Option.builder("o").argName("output").hasArg()
                 .desc(DefaultParameter.outputArgumentDesc).optionalArg(true).build();
-        Option option_q = Option.builder("q").argName("modeQuery").hasArg().valueSeparator(' ')
+        Option option_q = Option.builder("q").argName("modeQuery").hasArg(false)
                 .desc(DefaultParameter.queryModeArgumentDesc).optionalArg(true).build();
+
 
         Options options = new Options();
         CommandLineParser parser = new DefaultParser();
@@ -115,7 +116,6 @@ public class MainLGG {
                 throw new ParseException("This application needs mandatory arguments to run.");
             }
             commandLine = parser.parse(options, args);
-
             if (commandLine.hasOption("d")) {
                 DefaultParameter.dictionaryPathUsed = commandLine.getOptionValue("d");
                 checkFile(DefaultParameter.dictionaryPathUsed,"The RDF file must be a csv file.");
@@ -135,7 +135,6 @@ public class MainLGG {
             }
 
             if (commandLine.hasOption("help")) {
-                System.out.println("Option test is present.  This is a flag option.");
                 formatter.printHelp("CLIsample", DefaultParameter.header, options, DefaultParameter.footer, true);
                 return 0 ;
             }

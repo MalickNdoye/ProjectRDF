@@ -79,7 +79,7 @@ public final class DefaultParameter {
      */
     public static final String dictionaryArgumentDesc =
             "L'option -d permet de specifier un chemin vers un fichier csv qui servira de dictionnaire." +
-                    "Ce fichier csv a un format bien défini afin d'assurer le fonctionnement de ce programme." +
+                    "Ce fichier csv a un format bien défini afin d'assurer le fonctionnement de ce programme.\n" +
                     "Veuillez consulter la documentation pour plus d'informations.\n" +
                     "Cet option est optionnel mais requiert la présence d'un dico.csv avec l'arborescence suivante " +
                     dictionaryPath;
@@ -89,7 +89,7 @@ public final class DefaultParameter {
      */
     public static final String fileArgumentDesc =
             "L'option -f permet de specifier les chemins vers les deux fichiers representant des graphes RDF." +
-                    "Ces fichiers ont un format bien défini afin d'assurer le fonctionnement de ce programme." +
+                    "Ces fichiers ont un format bien défini afin d'assurer le fonctionnement de ce programme.\n" +
                     "Veuillez consulter la documentation pour plus d'informations.\n" +
                     "Cette option est obligatoire." ;
 
@@ -98,7 +98,7 @@ public final class DefaultParameter {
      */
     public static final String infoArgumentDesc =
             "L'option -i permet de specifier un chemin vers un fichier csv qui servira de fichier d'informations." +
-                    "Ce fichier csv a un format bien défini afin d'assurer le bon fonctionnement de ce programme." +
+                    "Ce fichier csv a un format bien défini afin d'assurer le bon fonctionnement de ce programme.\n" +
                     "Veuillez consulter la documentation pour plus d'informations.\n" +
                     "Cette option est optionnel mais requiert la présence d'un info.csv avec l'arborescence suivante " +
                     infoPath;
@@ -107,7 +107,7 @@ public final class DefaultParameter {
      * Constante contenant le descriptif de l'option d'exécution [-o].
      */
     public static final String outputArgumentDesc =
-            "L'option -o permet de specifier un chemin vers le repertoire où sera redirigé les fichiers en sortie." +
+            "L'option -o permet de specifier un chemin vers le repertoire où sera redirigé les fichiers en sortie.\n" +
                     "Veuillez consulter la documentation pour plus d'informations.\n" +
                     "Cette option est optionnel mais requiert la présence d'un dico.csv avec l'arborescence suivante " +
                     outputDirectory;
@@ -121,7 +121,7 @@ public final class DefaultParameter {
      * Constante contenant le descriptif de l'option d'exécution [q].
      */
     public static final String queryModeArgumentDesc =
-            "L'option -q définit le mode d'exécution en QUERY_MODE. " +
+            "L'option -q définit le mode d'exécution en QUERY_MODE.\n" +
                     "Veuillez consulter la documentation pour plus d'informations.\n" +
                     "Cette option est obligatoire sauf si l'option -g est déjà présent. " ;
 
@@ -129,7 +129,7 @@ public final class DefaultParameter {
      * Constante contenant le descriptif de l'option d'exécution [-g].
      */
     public static final String graphModeArgumentDesc =
-            "L'option -q définit le mode d'exécution en QUERY_MODE. " +
+            "L'option -g définit le mode d'exécution en GRAPH_MODE.\n" +
                     "Veuillez consulter la documentation pour plus d'informations.\n" +
                     "Cette option est obligatoire sauf si l'option -g est déjà présent. " ;
 
