@@ -81,7 +81,7 @@ public final class DefaultParameter {
             "L'option -d permet de specifier un chemin vers un fichier csv qui servira de dictionnaire." +
                     "Ce fichier csv a un format bien défini afin d'assurer le fonctionnement de ce programme.\n" +
                     "Veuillez consulter la documentation pour plus d'informations.\n" +
-                    "Cet option est optionnel mais requiert la présence d'un dico.csv avec l'arborescence suivante " +
+                    "Cette option est optionnel mais requiert la présence d'un dico.csv avec l'arborescence suivante " +
                     dictionaryPath;
 
     /**
