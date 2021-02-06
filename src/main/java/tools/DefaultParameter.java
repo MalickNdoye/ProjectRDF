@@ -85,13 +85,13 @@ public final class DefaultParameter {
                     dictionaryPath;
 
     /**
-     * Constante contenant le descriptif de l'option d'exécution [-g].
+     * Constante contenant le descriptif de l'option d'exécution [-f].
      */
-    public static final String graphArgumentDesc =
-            "L'option -g permet de specifier les chemins vers les deux fichiers representant des graphes RDF." +
+    public static final String fileArgumentDesc =
+            "L'option -f permet de specifier les chemins vers les deux fichiers representant des graphes RDF." +
                     "Ces fichiers ont un format bien défini afin d'assurer le fonctionnement de ce programme." +
                     "Veuillez consulter la documentation pour plus d'informations.\n" +
-                    "Cet option est obligatoire" ;
+                    "Cette option est obligatoire." ;
 
     /**
      * Constante contenant le descriptif de l'option d'exécution [-i].
@@ -100,7 +100,7 @@ public final class DefaultParameter {
             "L'option -i permet de specifier un chemin vers un fichier csv qui servira de fichier d'informations." +
                     "Ce fichier csv a un format bien défini afin d'assurer le bon fonctionnement de ce programme." +
                     "Veuillez consulter la documentation pour plus d'informations.\n" +
-                    "Cet option est optionnel mais requiert la présence d'un info.csv avec l'arborescence suivante " +
+                    "Cette option est optionnel mais requiert la présence d'un info.csv avec l'arborescence suivante " +
                     infoPath;
 
     /**
@@ -109,13 +109,30 @@ public final class DefaultParameter {
     public static final String outputArgumentDesc =
             "L'option -o permet de specifier un chemin vers le repertoire où sera redirigé les fichiers en sortie." +
                     "Veuillez consulter la documentation pour plus d'informations.\n" +
-                    "Cet option est optionnel mais requiert la présence d'un dico.csv avec l'arborescence suivante " +
+                    "Cette option est optionnel mais requiert la présence d'un dico.csv avec l'arborescence suivante " +
                     outputDirectory;
 
     /**
      * Constante contenant le descriptif de l'option d'aide [-h || help].
      */
     public static String helpDesc = "L'option pour afficher l'aide.";
+
+    /**
+     * Constante contenant le descriptif de l'option d'exécution [q].
+     */
+    public static final String queryModeArgumentDesc =
+            "L'option -q définit le mode d'exécution en QUERY_MODE. " +
+                    "Veuillez consulter la documentation pour plus d'informations.\n" +
+                    "Cette option est obligatoire sauf si l'option -g est déjà présent. " ;
+
+    /**
+     * Constante contenant le descriptif de l'option d'exécution [-g].
+     */
+    public static final String graphModeArgumentDesc =
+            "L'option -q définit le mode d'exécution en QUERY_MODE. " +
+                    "Veuillez consulter la documentation pour plus d'informations.\n" +
+                    "Cette option est obligatoire sauf si l'option -g est déjà présent. " ;
+
 
     /**
      * Constante contenant le descriptif des paramètres d'exécutions.
