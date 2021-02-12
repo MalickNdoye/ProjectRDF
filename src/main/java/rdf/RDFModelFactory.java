@@ -14,6 +14,7 @@ import rdfcomputation.RDFComputation;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 
 /**
  * RDFModelFactory est la classe qui génére des objets Model de l'API Jena et des objets RDFComputation.
@@ -395,345 +396,290 @@ public class RDFModelFactory {
             default:
                 throw new IOException("Erreur de chargement 1");
         }
-        HashMap<String, String> prefixs = rdf.getPrefixs();
-        HashMap<String, String> blanknodes = rdf.getBlanknodes();
-        InputStream ips=new FileInputStream(fileName);
-        InputStreamReader ipsr=new InputStreamReader(ips);
-        BufferedReader br = new BufferedReader(ipsr);
-        String ligne;
-        int s = 0;
-        while ((ligne=br.readLine())!=null) {
-            String[] spl = ligne.split(" ");
-            if (spl[0].equals("head")) {
-                for (int i=1; i<spl.length; i++) {
-                    vars.add(spl[i].substring(2));
-                }
-            }
-            else if (spl[0].equals("@prefix")) {
-                prefixs.put(spl[1].substring(0, spl[1].length()-1), spl[2].substring(1, spl[2].length()-1));
-            }
-            else {
-                if (spl[0].charAt(0) == '_') {
-                    if (spl[1].charAt(0) == '_') {
-                        if (spl[2].charAt(0) == '_') {
-                            String var1 = "";
-                            if (blanknodes.containsKey(spl[0].substring(2))) {
-                                var1 = blanknodes.get(spl[0].substring(2));
-                            }
-                            else{
-                                var1 = "y"+spl[0].substring(2);
-                                blanknodes.put(spl[0].substring(2), var1);
-                            }
-                            Resource rs1 = query.createResource(var1);
-                            String var2 = "";
-                            if (blanknodes.containsKey(spl[2].substring(2))) {
-                                var2 = blanknodes.get(spl[2].substring(2));
-                            }
-                            else{
-                                var2 = "y"+spl[2].substring(2);
-                                blanknodes.put(spl[2].substring(2), var2);
-                            }
-                            Resource rs2 = query.createResource(var2);
-                            String st = "y"+spl[1].substring(2);
-                            Property pr = query.createProperty(st);
-                            query.add(rs1, pr, rs2);
-                        }
-                        else {
-                            String var1 = "";
-                            if (blanknodes.containsKey(spl[0].substring(2))) {
-                                var1 = blanknodes.get(spl[0].substring(2));
-                            }
-                            else{
-                                var1 = "y"+spl[0].substring(2);
-                                blanknodes.put(spl[0].substring(2), var1);
-                            }
-                            Resource rs1 = query.createResource(var1);
-                            String st = "y"+spl[1].substring(2);
-                            Property pr = query.createProperty(st);
-                            Resource rs2 = null;
-                            Literal lt = null;
-                            if (prefixs.containsKey(getprefx(spl[2]))) {
-                                rs2 = query.createResource(prefixs.get(getprefx(spl[2]))+""+getname(spl[2]));
-                            }
-                            else {
-                                if (spl[2].charAt(0) == '<') {
-                                    rs2 = query.createResource(spl[2].substring(1,spl[2].length()-1));
-                                }
-                                else if (spl[2].charAt(0) == '"') {
-                                    lt = query.createLiteral(spl[2].substring(1,spl[2].length()-1));
-                                }
-                                else {
-                                    rs2 = query.createResource(spl[2]);
-                                }
-                            }
-                            if (rs2 != null) {
-                                query.add(rs1, pr, rs2);
-                            }
-                            else {
-                                query.add(rs1, pr, lt);
-                            }
-                        }
+        if (!fileName.toLowerCase(Locale.ROOT).equals("unknown")) {
+            HashMap<String, String> prefixs = rdf.getPrefixs();
+            HashMap<String, String> blanknodes = rdf.getBlanknodes();
+            InputStream ips = new FileInputStream(fileName);
+            InputStreamReader ipsr = new InputStreamReader(ips);
+            BufferedReader br = new BufferedReader(ipsr);
+            String ligne;
+            int s = 0;
+            while ((ligne = br.readLine()) != null) {
+                String[] spl = ligne.split(" ");
+                if (spl[0].equals("head")) {
+                    for (int i = 1; i < spl.length; i++) {
+                        vars.add(spl[i].substring(2));
                     }
-                    else {
-                        if (spl[2].charAt(0) == '_') {
-                            String var1 = "";
-                            if (blanknodes.containsKey(spl[0].substring(2))) {
-                                var1 = blanknodes.get(spl[0].substring(2));
-                            }
-                            else{
-                                var1 = "y"+spl[0].substring(2);
-                                blanknodes.put(spl[0].substring(2), var1);
-                            }
-                            Resource rs1 = query.createResource(var1);
-                            String var2 = "";
-                            if (blanknodes.containsKey(spl[2].substring(2))) {
-                                var2 = blanknodes.get(spl[2].substring(2));
-                            }
-                            else{
-                                var2 = "y"+spl[2].substring(2);
-                                blanknodes.put(spl[2].substring(2), var2);
-                            }
-                            Resource rs2 = query.createResource(var2);
-                            Property pr = null;
-                            if (spl[1].equals("a")) {
-                                pr = query.createProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
-                            }
-                            else {
-                                if (prefixs.containsKey(getprefx(spl[1]))) {
-                                    pr = query.createProperty(prefixs.get(getprefx(spl[1]))+""+getname(spl[1]));
+                } else if (spl[0].equals("@prefix")) {
+                    prefixs.put(spl[1].substring(0, spl[1].length() - 1), spl[2].substring(1, spl[2].length() - 1));
+                } else {
+                    if (spl[0].charAt(0) == '_') {
+                        if (spl[1].charAt(0) == '_') {
+                            if (spl[2].charAt(0) == '_') {
+                                String var1 = "";
+                                if (blanknodes.containsKey(spl[0].substring(2))) {
+                                    var1 = blanknodes.get(spl[0].substring(2));
+                                } else {
+                                    var1 = "y" + spl[0].substring(2);
+                                    blanknodes.put(spl[0].substring(2), var1);
                                 }
-                                else if (spl[1].charAt(0) == '<') {
-                                    pr = query.createProperty(spl[1].substring(1,spl[1].length()-1));
+                                Resource rs1 = query.createResource(var1);
+                                String var2 = "";
+                                if (blanknodes.containsKey(spl[2].substring(2))) {
+                                    var2 = blanknodes.get(spl[2].substring(2));
+                                } else {
+                                    var2 = "y" + spl[2].substring(2);
+                                    blanknodes.put(spl[2].substring(2), var2);
                                 }
-                                else {
-                                    pr = query.createProperty(spl[1]);
+                                Resource rs2 = query.createResource(var2);
+                                String st = "y" + spl[1].substring(2);
+                                Property pr = query.createProperty(st);
+                                query.add(rs1, pr, rs2);
+                            } else {
+                                String var1 = "";
+                                if (blanknodes.containsKey(spl[0].substring(2))) {
+                                    var1 = blanknodes.get(spl[0].substring(2));
+                                } else {
+                                    var1 = "y" + spl[0].substring(2);
+                                    blanknodes.put(spl[0].substring(2), var1);
                                 }
-                            }
-                            query.add(rs1, pr, rs2);
-                        }
-                        else {
-                            String var1 = "";
-                            if (blanknodes.containsKey(spl[0].substring(2))) {
-                                var1 = blanknodes.get(spl[0].substring(2));
-                            }
-                            else{
-                                var1 = "y"+spl[0].substring(2);
-                                blanknodes.put(spl[0].substring(2), var1);
-                            }
-                            Resource rs1 = query.createResource(var1);
-                            Resource rs2 = null;
-                            Property pr = null;
-                            Literal lt = null;
-                            if (prefixs.containsKey(getprefx(spl[2]))) {
-                                rs2 = query.createResource(prefixs.get(getprefx(spl[2]))+""+getname(spl[2]));
-                            }
-                            else {
-                                if (spl[2].charAt(0) == '<') {
-                                    rs2 = query.createResource(spl[2].substring(1,spl[2].length()-1));
+                                Resource rs1 = query.createResource(var1);
+                                String st = "y" + spl[1].substring(2);
+                                Property pr = query.createProperty(st);
+                                Resource rs2 = null;
+                                Literal lt = null;
+                                if (prefixs.containsKey(getprefx(spl[2]))) {
+                                    rs2 = query.createResource(prefixs.get(getprefx(spl[2])) + "" + getname(spl[2]));
+                                } else {
+                                    if (spl[2].charAt(0) == '<') {
+                                        rs2 = query.createResource(spl[2].substring(1, spl[2].length() - 1));
+                                    } else if (spl[2].charAt(0) == '"') {
+                                        lt = query.createLiteral(spl[2].substring(1, spl[2].length() - 1));
+                                    } else {
+                                        rs2 = query.createResource(spl[2]);
+                                    }
                                 }
-                                else if (spl[2].charAt(0) == '"') {
-                                    lt = query.createLiteral(spl[2].substring(1,spl[2].length()-1));
-                                }
-                                else {
-                                    rs2 = query.createResource(spl[2]);
+                                if (rs2 != null) {
+                                    query.add(rs1, pr, rs2);
+                                } else {
+                                    query.add(rs1, pr, lt);
                                 }
                             }
-                            if (spl[1].equals("a")) {
-                                pr = query.createProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
-                            }
-                            else {
-                                if (prefixs.containsKey(getprefx(spl[1]))) {
-                                    pr = query.createProperty(prefixs.get(getprefx(spl[1]))+""+getname(spl[1]));
+                        } else {
+                            if (spl[2].charAt(0) == '_') {
+                                String var1 = "";
+                                if (blanknodes.containsKey(spl[0].substring(2))) {
+                                    var1 = blanknodes.get(spl[0].substring(2));
+                                } else {
+                                    var1 = "y" + spl[0].substring(2);
+                                    blanknodes.put(spl[0].substring(2), var1);
                                 }
-                                else {
+                                Resource rs1 = query.createResource(var1);
+                                String var2 = "";
+                                if (blanknodes.containsKey(spl[2].substring(2))) {
+                                    var2 = blanknodes.get(spl[2].substring(2));
+                                } else {
+                                    var2 = "y" + spl[2].substring(2);
+                                    blanknodes.put(spl[2].substring(2), var2);
+                                }
+                                Resource rs2 = query.createResource(var2);
+                                Property pr = null;
+                                if (spl[1].equals("a")) {
+                                    pr = query.createProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
+                                } else {
                                     if (prefixs.containsKey(getprefx(spl[1]))) {
-                                        pr = query.createProperty(prefixs.get(getprefx(spl[1]))+""+getname(spl[1]));
-                                    }
-                                    else if (spl[1].charAt(0) == '<') {
-                                        pr = query.createProperty(spl[1].substring(1,spl[1].length()-1));
-                                    }
-                                    else {
+                                        pr = query.createProperty(prefixs.get(getprefx(spl[1])) + "" + getname(spl[1]));
+                                    } else if (spl[1].charAt(0) == '<') {
+                                        pr = query.createProperty(spl[1].substring(1, spl[1].length() - 1));
+                                    } else {
                                         pr = query.createProperty(spl[1]);
                                     }
                                 }
-                            }
-                            if (rs2 != null) {
                                 query.add(rs1, pr, rs2);
-                            }
-                            else {
-                                query.add(rs1, pr, lt);
+                            } else {
+                                String var1 = "";
+                                if (blanknodes.containsKey(spl[0].substring(2))) {
+                                    var1 = blanknodes.get(spl[0].substring(2));
+                                } else {
+                                    var1 = "y" + spl[0].substring(2);
+                                    blanknodes.put(spl[0].substring(2), var1);
+                                }
+                                Resource rs1 = query.createResource(var1);
+                                Resource rs2 = null;
+                                Property pr = null;
+                                Literal lt = null;
+                                if (prefixs.containsKey(getprefx(spl[2]))) {
+                                    rs2 = query.createResource(prefixs.get(getprefx(spl[2])) + "" + getname(spl[2]));
+                                } else {
+                                    if (spl[2].charAt(0) == '<') {
+                                        rs2 = query.createResource(spl[2].substring(1, spl[2].length() - 1));
+                                    } else if (spl[2].charAt(0) == '"') {
+                                        lt = query.createLiteral(spl[2].substring(1, spl[2].length() - 1));
+                                    } else {
+                                        rs2 = query.createResource(spl[2]);
+                                    }
+                                }
+                                if (spl[1].equals("a")) {
+                                    pr = query.createProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
+                                } else {
+                                    if (prefixs.containsKey(getprefx(spl[1]))) {
+                                        pr = query.createProperty(prefixs.get(getprefx(spl[1])) + "" + getname(spl[1]));
+                                    } else {
+                                        if (prefixs.containsKey(getprefx(spl[1]))) {
+                                            pr = query.createProperty(prefixs.get(getprefx(spl[1])) + "" + getname(spl[1]));
+                                        } else if (spl[1].charAt(0) == '<') {
+                                            pr = query.createProperty(spl[1].substring(1, spl[1].length() - 1));
+                                        } else {
+                                            pr = query.createProperty(spl[1]);
+                                        }
+                                    }
+                                }
+                                if (rs2 != null) {
+                                    query.add(rs1, pr, rs2);
+                                } else {
+                                    query.add(rs1, pr, lt);
+                                }
                             }
                         }
-                    }
-                }
-                else {
-                    if (spl[1].charAt(0) == '_') {
-                        if (spl[2].charAt(0) == '_') {
-                            Resource rs1 = null;
-                            if (prefixs.containsKey(getprefx(spl[0]))) {
-                                rs1 = query.createResource(prefixs.get(getprefx(spl[0]))+""+getname(spl[0]));
-                            }
-                            else {
-                                if (spl[0].charAt(0) == '<') {
-                                    rs1 = query.createResource(spl[0].substring(1,spl[0].length()-1));
+                    } else {
+                        if (spl[1].charAt(0) == '_') {
+                            if (spl[2].charAt(0) == '_') {
+                                Resource rs1 = null;
+                                if (prefixs.containsKey(getprefx(spl[0]))) {
+                                    rs1 = query.createResource(prefixs.get(getprefx(spl[0])) + "" + getname(spl[0]));
+                                } else {
+                                    if (spl[0].charAt(0) == '<') {
+                                        rs1 = query.createResource(spl[0].substring(1, spl[0].length() - 1));
+                                    } else {
+                                        rs1 = query.createResource(spl[0]);
+                                    }
                                 }
-                                else {
+                                String var2 = "";
+                                if (blanknodes.containsKey(spl[2].substring(2))) {
+                                    var2 = blanknodes.get(spl[2].substring(2));
+                                } else {
+                                    var2 = "v_" + spl[2].substring(2);
+                                    blanknodes.put(spl[2].substring(2), var2);
+                                }
+                                Resource rs2 = query.createResource(var2);
+                                String st = "v_" + spl[1].substring(2);
+                                Property pr = query.createProperty(st);
+                                query.add(rs1, pr, rs2);
+                            } else {
+                                Resource rs1 = null;
+                                if (prefixs.containsKey(getprefx(spl[0]))) {
+                                    rs1 = query.createResource(prefixs.get(getprefx(spl[0])) + "" + getname(spl[0]));
+                                } else if (spl[0].charAt(0) == '<') {
+                                    rs1 = query.createResource(spl[0].substring(1, spl[0].length() - 1));
+                                } else {
                                     rs1 = query.createResource(spl[0]);
                                 }
-                            }
-                            String var2 = "";
-                            if (blanknodes.containsKey(spl[2].substring(2))) {
-                                var2 = blanknodes.get(spl[2].substring(2));
-                            }
-                            else{
-                                var2 = "v_"+spl[2].substring(2);
-                                blanknodes.put(spl[2].substring(2), var2);
-                            }
-                            Resource rs2 = query.createResource(var2);
-                            String st = "v_"+spl[1].substring(2);
-                            Property pr = query.createProperty(st);
-                            query.add(rs1, pr, rs2);
-                        }
-                        else {
-                            Resource rs1 = null;
-                            if (prefixs.containsKey(getprefx(spl[0]))) {
-                                rs1 = query.createResource(prefixs.get(getprefx(spl[0]))+""+getname(spl[0]));
-                            }
-                            else
-                            if (spl[0].charAt(0) == '<') {
-                                rs1 = query.createResource(spl[0].substring(1,spl[0].length()-1));
-                            }
-                            else {
-                                rs1 = query.createResource(spl[0]);
-                            }
-                            String st = "v_"+spl[1].substring(2);
-                            Property pr = query.createProperty(st);
-                            Resource rs2 = null;
-                            Literal lt = null;
-                            if (prefixs.containsKey(getprefx(spl[2]))) {
-                                rs2 = query.createResource(prefixs.get(getprefx(spl[2]))+""+getname(spl[2]));
-                            }
-                            else {
-                                if (spl[2].charAt(0) == '<') {
-                                    rs2 = query.createResource(spl[2].substring(1,spl[2].length()-1));
+                                String st = "v_" + spl[1].substring(2);
+                                Property pr = query.createProperty(st);
+                                Resource rs2 = null;
+                                Literal lt = null;
+                                if (prefixs.containsKey(getprefx(spl[2]))) {
+                                    rs2 = query.createResource(prefixs.get(getprefx(spl[2])) + "" + getname(spl[2]));
+                                } else {
+                                    if (spl[2].charAt(0) == '<') {
+                                        rs2 = query.createResource(spl[2].substring(1, spl[2].length() - 1));
+                                    } else if (spl[2].charAt(0) == '"') {
+                                        lt = query.createLiteral(spl[2].substring(1, spl[2].length() - 1));
+                                    } else {
+                                        rs2 = query.createResource(spl[2]);
+                                    }
                                 }
-                                else if (spl[2].charAt(0) == '"') {
-                                    lt = query.createLiteral(spl[2].substring(1,spl[2].length()-1));
-                                }
-                                else {
-                                    rs2 = query.createResource(spl[2]);
+                                if (rs2 != null) {
+                                    query.add(rs1, pr, rs2);
+                                } else {
+                                    query.add(rs1, pr, lt);
                                 }
                             }
-                            if (rs2 != null) {
-                                query.add(rs1, pr, rs2);
-                            }
-                            else {
-                                query.add(rs1, pr, lt);
-                            }
-                        }
-                    }
-                    else {
-                        if (spl[2].charAt(0) == '_') {
-                            Resource rs1 = null;
-                            if (prefixs.containsKey(getprefx(spl[0]))) {
-                                rs1 = query.createResource(prefixs.get(getprefx(spl[0]))+""+getname(spl[0]));
-                            }
-                            else
-                            if (spl[0].charAt(0) == '<') {
-                                rs1 = query.createResource(spl[0].substring(1,spl[0].length()-1));
-                            }
-                            else {
-                                rs1 = query.createResource(spl[0]);
-                            }
-                            Property pr = null;
-                            if (spl[1].equals("a")) {
-                                pr = query.createProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
-                            }
-                            else {
-                                if (prefixs.containsKey(getprefx(spl[1]))) {
-                                    pr = query.createProperty(prefixs.get(getprefx(spl[1]))+""+getname(spl[1]));
+                        } else {
+                            if (spl[2].charAt(0) == '_') {
+                                Resource rs1 = null;
+                                if (prefixs.containsKey(getprefx(spl[0]))) {
+                                    rs1 = query.createResource(prefixs.get(getprefx(spl[0])) + "" + getname(spl[0]));
+                                } else if (spl[0].charAt(0) == '<') {
+                                    rs1 = query.createResource(spl[0].substring(1, spl[0].length() - 1));
+                                } else {
+                                    rs1 = query.createResource(spl[0]);
                                 }
-                                else {
+                                Property pr = null;
+                                if (spl[1].equals("a")) {
+                                    pr = query.createProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
+                                } else {
                                     if (prefixs.containsKey(getprefx(spl[1]))) {
-                                        pr = query.createProperty(prefixs.get(getprefx(spl[1]))+""+getname(spl[1]));
-                                    }
-                                    else if (spl[1].charAt(0) == '<') {
-                                        pr = query.createProperty(spl[1].substring(1,spl[1].length()-1));
-                                    }
-                                    else {
-                                        pr = query.createProperty(spl[1]);
-                                    }
-                                }
-                            }
-                            String var2 = "";
-                            if (blanknodes.containsKey(spl[2].substring(2))) {
-                                var2 = blanknodes.get(spl[2].substring(2));
-                            }
-                            else {
-                                var2 = "v_"+spl[2].substring(2);
-                                blanknodes.put(spl[2].substring(2), var2);
-                            }
-                            Resource rs2 = query.createResource(var2);
-                            query.add(rs1, pr, rs2);
-                        }
-                        else {
-                            Resource rs1 = null;
-                            if (prefixs.containsKey(getprefx(spl[0]))) {
-                                rs1 = query.createResource(prefixs.get(getprefx(spl[0]))+""+getname(spl[0]));
-                            }
-                            else
-                            if (spl[0].charAt(0) == '<') {
-                                rs1 = query.createResource(spl[0].substring(1,spl[0].length()-1));
-                            }
-                            else {
-                                rs1 = query.createResource(spl[0]);
-                            }
-                            Property pr = null;
-                            if (spl[1].equals("a")) {
-                                pr = query.createProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
-                            }
-                            else {
-                                if (prefixs.containsKey(getprefx(spl[1]))) {
-                                    pr = query.createProperty(prefixs.get(getprefx(spl[1]))+""+getname(spl[1]));
-                                }
-                                else {
-                                    if (prefixs.containsKey(getprefx(spl[1]))) {
-                                        pr = query.createProperty(prefixs.get(getprefx(spl[1]))+""+getname(spl[1]));
-                                    }
-                                    else if (spl[1].charAt(0) == '<') {
-                                        pr = query.createProperty(spl[1].substring(1,spl[1].length()-1));
-                                    }
-                                    else {
-                                        pr = query.createProperty(spl[1]);
+                                        pr = query.createProperty(prefixs.get(getprefx(spl[1])) + "" + getname(spl[1]));
+                                    } else {
+                                        if (prefixs.containsKey(getprefx(spl[1]))) {
+                                            pr = query.createProperty(prefixs.get(getprefx(spl[1])) + "" + getname(spl[1]));
+                                        } else if (spl[1].charAt(0) == '<') {
+                                            pr = query.createProperty(spl[1].substring(1, spl[1].length() - 1));
+                                        } else {
+                                            pr = query.createProperty(spl[1]);
+                                        }
                                     }
                                 }
-                            }
-                            Resource rs2 = null;
-                            Literal lt = null;
-                            if (prefixs.containsKey(getprefx(spl[2]))) {
-                                rs2 = query.createResource(prefixs.get(getprefx(spl[2]))+""+getname(spl[2]));
-                            }
-                            else {
-                                if (spl[2].charAt(0) == '<') {
-                                    rs2 = query.createResource(spl[2].substring(1,spl[2].length()-1));
+                                String var2 = "";
+                                if (blanknodes.containsKey(spl[2].substring(2))) {
+                                    var2 = blanknodes.get(spl[2].substring(2));
+                                } else {
+                                    var2 = "v_" + spl[2].substring(2);
+                                    blanknodes.put(spl[2].substring(2), var2);
                                 }
-                                else if (spl[2].charAt(0) == '"') {
-                                    lt = query.createLiteral(spl[2].substring(1,spl[2].length()-1));
-                                }
-                                else {
-                                    rs2 = query.createResource(spl[2]);
-                                }
-                            }
-                            if (rs2 != null) {
+                                Resource rs2 = query.createResource(var2);
                                 query.add(rs1, pr, rs2);
-                            }
-                            else {
-                                query.add(rs1, pr, lt);
+                            } else {
+                                Resource rs1 = null;
+                                if (prefixs.containsKey(getprefx(spl[0]))) {
+                                    rs1 = query.createResource(prefixs.get(getprefx(spl[0])) + "" + getname(spl[0]));
+                                } else if (spl[0].charAt(0) == '<') {
+                                    rs1 = query.createResource(spl[0].substring(1, spl[0].length() - 1));
+                                } else {
+                                    rs1 = query.createResource(spl[0]);
+                                }
+                                Property pr = null;
+                                if (spl[1].equals("a")) {
+                                    pr = query.createProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
+                                } else {
+                                    if (prefixs.containsKey(getprefx(spl[1]))) {
+                                        pr = query.createProperty(prefixs.get(getprefx(spl[1])) + "" + getname(spl[1]));
+                                    } else {
+                                        if (prefixs.containsKey(getprefx(spl[1]))) {
+                                            pr = query.createProperty(prefixs.get(getprefx(spl[1])) + "" + getname(spl[1]));
+                                        } else if (spl[1].charAt(0) == '<') {
+                                            pr = query.createProperty(spl[1].substring(1, spl[1].length() - 1));
+                                        } else {
+                                            pr = query.createProperty(spl[1]);
+                                        }
+                                    }
+                                }
+                                Resource rs2 = null;
+                                Literal lt = null;
+                                if (prefixs.containsKey(getprefx(spl[2]))) {
+                                    rs2 = query.createResource(prefixs.get(getprefx(spl[2])) + "" + getname(spl[2]));
+                                } else {
+                                    if (spl[2].charAt(0) == '<') {
+                                        rs2 = query.createResource(spl[2].substring(1, spl[2].length() - 1));
+                                    } else if (spl[2].charAt(0) == '"') {
+                                        lt = query.createLiteral(spl[2].substring(1, spl[2].length() - 1));
+                                    } else {
+                                        rs2 = query.createResource(spl[2]);
+                                    }
+                                }
+                                if (rs2 != null) {
+                                    query.add(rs1, pr, rs2);
+                                } else {
+                                    query.add(rs1, pr, lt);
+                                }
                             }
                         }
                     }
                 }
             }
+        }else{
+            System.out.println("Chargement de fichier annulé :"+fileName);
         }
     }
 

@@ -20,6 +20,10 @@ public enum LggMode {
      */
     INPUT_ERROR,
     /**
+     * Conversion d'un fichier turtle .ttl en n-triples .n3
+     */
+    CONVERSION_MODE,
+    /**
      * Mode par défaut.
      */
     DEFAULT

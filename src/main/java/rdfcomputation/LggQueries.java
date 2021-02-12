@@ -334,4 +334,5 @@ public class LggQueries extends RDFComputation{
     public boolean isVars(final String s) {
         return s.charAt(0) == 'y' || s.charAt(0) == '?';
     }
+
 }

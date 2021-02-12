@@ -8,11 +8,11 @@ import rdf.RDFModelFactory;
 import rdfcomputation.LggGraphs;
 import rdfcomputation.LggQueries;
 import rdfio.CSVFileIO;
+import rdfio.SPARQLFileIO;
 import tools.DefaultParameter;
 import tools.LggMode;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.util.concurrent.TimeUnit;
 
 
@@ -46,6 +46,9 @@ public class MainLGG {
             case 2 :
                 mode = LggMode.LGG_QUERY_MODE ;
                 break ;
+            case  3 :
+                mode = LggMode.CONVERSION_MODE ;
+                break ;
             default:
                 System.err.println("Erreur de parsing : valeur de retour non reconnue");
                 return;
@@ -64,6 +67,10 @@ public class MainLGG {
                         DefaultParameter.graphPath2);
                 queryModeExecution(lggQueries);
                 break ;
+            case CONVERSION_MODE:
+                SPARQLFileIO sparqlFileIO = new SPARQLFileIO();
+                sparqlFileIO.convertToNTriples(DefaultParameter.graphPath1);
+                break;
             default:
                 break;
         }
@@ -80,6 +87,8 @@ public class MainLGG {
     private static int parsingInput(String[] args) {
 
         CommandLine commandLine;
+        Option option_c = Option.builder("c").argName("modeConversion").hasArg(false)
+                .desc("A DEFINIR").optionalArg(true).build();
         Option option_d = Option.builder("d").argName("dico").hasArg()
                 .desc(DefaultParameter.dictionaryArgumentDesc).optionalArg(true).build();
         Option option_f = Option.builder("f").argName("input").hasArgs().valueSeparator(' ').numberOfArgs(2)
@@ -99,6 +108,7 @@ public class MainLGG {
         Options options = new Options();
         CommandLineParser parser = new DefaultParser();
 
+        options.addOption(option_c);
         options.addOption(option_d);
         options.addOption(option_f);
         options.addOption(option_g);
@@ -158,7 +168,10 @@ public class MainLGG {
                     } else {
                         throw new ParseException("no execution mode specified.") ;
                     }
-                } else {
+                } else if(remainder.length == 1 && commandLine.hasOption('c')) {
+                    DefaultParameter.graphPath1 = remainder[0];
+                    executionMode = 3 ;
+                }else{
                     String reason = remainder.length < 2 ? "too few arguments." : "too much arguments.";
                     throw new ParseException(reason);
                 }
@@ -204,8 +217,15 @@ public class MainLGG {
 
             timeProd = timeProd/5;
             writeInfo(resultat,timeProd);
-            resultat.write(System.out, "N-Triples");
-
+            PrintWriter writer = null;
+            try {
+                String path = DefaultParameter.graphResult.substring(0,DefaultParameter.graphResult.lastIndexOf('.'))
+                        + ".n3";
+                writer = new PrintWriter(new FileWriter(path));
+                resultat.write(writer, "N-Triples");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
             if (lggQueries.lggexists()) {
                 System.out.println("An lgg exists");

@@ -1,16 +1,19 @@
 package rdfio;
 
+import org.apache.jena.dboe.base.file.FileException;
 import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.rdf.model.StmtIterator;
+import rdf.RDFModelFactory;
 import rdfcomputation.LggQueries;
 import rdfcomputation.RDFComputation;
+import tools.DefaultParameter;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
 public class SPARQLFileIO extends RDFFileIO{
-    private final LggQueries lggQueries ;
+    private LggQueries lggQueries ;
 
     public SPARQLFileIO(RDFComputation rdfComputation) {
         if(rdfComputation instanceof LggQueries){
@@ -18,6 +21,10 @@ public class SPARQLFileIO extends RDFFileIO{
         } else {
             lggQueries = new LggQueries();
         }
+    }
+
+    public SPARQLFileIO(){
+        lggQueries = new LggQueries();
     }
 
     @Override
@@ -93,5 +100,20 @@ public class SPARQLFileIO extends RDFFileIO{
         }catch(IOException e){
             e.printStackTrace();
         }
+    }
+
+    public void convertToNTriples(String path){
+        RDFModelFactory factory = new RDFModelFactory(path);
+        lggQueries = factory.loadQueries(path,"unknown") ;
+        try {
+            String output = DefaultParameter.outputDirectoryUsed
+                    + path.substring(path.lastIndexOf("/"),path.lastIndexOf('.'));
+            PrintWriter writer = new PrintWriter(new FileWriter(output+".n3")) ;
+            lggQueries.getQuery1().write(writer,"N-Triples");
+
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 }
