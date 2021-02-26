@@ -6,14 +6,12 @@ import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.rdf.model.StmtIterator;
 import rdf.DictionaryNode;
 import tools.DefaultParameter;
-
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
 /**
- * LggGraphs est la classe qui effectue le calcul de LGG sur des graphes.
- *
+ * LggGraphs est la classe qui effectue le calcul de LGG de deux graphes.
  * @see RDFComputation
  * @version 1.0.0
  */
@@ -26,12 +24,6 @@ public class LggGraphs extends RDFComputation{
         super();
     }
 
-    /**
-     * @see RDFComputation#RDFComputation(Model, Model)
-     */
-    public LggGraphs(Model query1,Model query2){
-        super(query1, query2);
-    }
 
     /**
      * Calcule le graphe des points communs.
@@ -79,7 +71,7 @@ public class LggGraphs extends RDFComputation{
      * Calcule le LGG de deux graphes. Le résultat est stocké dans resultProd.
      * @see RDFComputation
      */
-    public void writelgg() {
+    public void writeLGG() {
         PrintWriter writer ;
         try {
             writer = new PrintWriter(new FileWriter(DefaultParameter.graphResult));
@@ -138,10 +130,14 @@ public class LggGraphs extends RDFComputation{
         }
     }
 
+
+    /**
+     * Méthode toString classique.
+     * @return Hash de l'objet.
+     */
     @Override
     public String toString() {
         return super.toString();
     }
-
 
 }

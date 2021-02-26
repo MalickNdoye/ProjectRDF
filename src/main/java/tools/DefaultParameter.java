@@ -4,27 +4,28 @@ package tools;
 /**
  * DefaultParameter est la classe qui sont stockés les variables par défaut
  * et les constantes de l'application.
- *
  * @author tndoye
  * @version 1.0.0
  */
 public final class DefaultParameter {
+    public static final String version = "1.0.0" ;
+    public static final String releasedOn = "February 2021" ;
+    public static final String author  = "tndoye" ;
     //CONSTANTES DE CHEMINS DE REPERTOIRES ET FICHIERS
-
     /**
      * Constante qui définit le chemin par défaut vers le fichier du dictionnaire.
      */
-    public static final String dictionaryPath = "./Ressource/Archive/dico.csv";
+    public static final String dictionaryPath = "./dico.csv";
 
     /**
-     * Constante qui définit le chemin par défaut vers le fichier des temps d'éxecutions.
+     * Constante qui définit le chemin par défaut vers le fichier des temps d'exécutions.
      */
-    public static final String infoPath = "./Ressource/Archive/info.csv";
+    public static final String infoPath = "./info.csv";
 
     /**
      * Constante qui définit le chemin par défaut vers le répertoire de sortie.
      */
-    public static final String outputDirectory = "./Ressource/Output/";
+    public static final String outputDirectory = "./";
 
 
     //VARIABLES
@@ -71,9 +72,7 @@ public final class DefaultParameter {
      */
     public static String graphResult = null;
 
-
-
-    //PARAMETRES DE MAIN
+    //DESCRIPTIONS DE PARAMÈTRES DE MAIN ET AUTRES
     /**
      * Constante contenant le descriptif de l'option d'exécution [-d].
      */
@@ -88,7 +87,7 @@ public final class DefaultParameter {
      * Constante contenant le descriptif de l'option d'exécution [-f].
      */
     public static final String fileArgumentDesc =
-            "L'option -f permet de specifier les chemins vers les deux fichiers representant des graphes RDF." +
+            "L'option -f permet de specifier les chemins vers les deux fichiers représentant des graphes RDF." +
                     "Ces fichiers ont un format bien défini afin d'assurer le fonctionnement de ce programme.\n" +
                     "Veuillez consulter la documentation pour plus d'informations.\n" +
                     "Cette option est obligatoire." ;
@@ -112,26 +111,39 @@ public final class DefaultParameter {
                     "Cette option est optionnel mais requiert la présence d'un dico.csv avec l'arborescence suivante " +
                     outputDirectory;
 
+
     /**
-     * Constante contenant le descriptif de l'option d'aide [-h || help].
+     * Constante contenant le descriptif de l'option d'exécution [-v || --version].
      */
-    public static String helpDesc = "L'option pour afficher l'aide.";
+    public static final String versionArgumentDesc = "Information sur la version de l'application." ;
+    /**
+     * Constante contenant le descriptif de l'option d'aide [-h || --help].
+     */
+    public static String helpDesc = "Affiche l'aide";
 
     /**
      * Constante contenant le descriptif de l'option d'exécution [q].
      */
     public static final String queryModeArgumentDesc =
             "L'option -q définit le mode d'exécution en QUERY_MODE.\n" +
-                    "Veuillez consulter la documentation pour plus d'informations.\n" +
-                    "Cette option est obligatoire sauf si l'option -g est déjà présent. " ;
+            "Cette option est une option de mode d'exécution. Une option de mode d'exécution est obligatoire." +
+            "Veuillez consulter la documentation pour plus d'informations.\n" ;
 
     /**
      * Constante contenant le descriptif de l'option d'exécution [-g].
      */
     public static final String graphModeArgumentDesc =
             "L'option -g définit le mode d'exécution en GRAPH_MODE.\n" +
-                    "Veuillez consulter la documentation pour plus d'informations.\n" +
-                    "Cette option est obligatoire sauf si l'option -g est déjà présent. " ;
+            "Cette option est une option de mode d'exécution. Une option de mode d'exécution est obligatoire." +
+            "Veuillez consulter la documentation pour plus d'informations.\n" ;
+
+    /**
+     * Constante contenant le descriptif de l'option d'exécution [-c].
+     */
+    public static final String conversionArgumentDesc =
+            "L'option -c définit le mode d'exécution en CONVERSION_MODE.\n" +
+                    "Cette option est une option de mode d'exécution. Une option de mode d'exécution est obligatoire." +
+                    "Veuillez consulter la documentation pour plus d'informations.\n" ;
 
 
     /**
@@ -140,8 +152,10 @@ public final class DefaultParameter {
     public static final String header =
             "\t\t\t[<arg1>] [<arg2>] [<arg3>] ...\n\t\tOptions, flags and arguments may be in any order";
 
-    
+    /**
+     * Constante contenant le descriptif de bas de page.
+     */
     public static final String footer =
-            "This is DwB's solution brought to Commons CLI 1.3.1 compliance (deprecated methods replaced)";
+            String.format("This is RDFGraph Application (version %s) released on %s", version, releasedOn);
 
 }

@@ -5,13 +5,12 @@ import java.util.Map;
 
 /**
  * RDFFileIO est la classe qui généralise toutes les classes qui traitent des fichiers.
- *
  * @see rdfio.RDFFileInputMethod
  * @version 1.0.0
  */
 public abstract class RDFFileIO implements RDFFileInputMethod {
     /**
-     * Chemin par défaut vers le fichier d"crivant un graphe RDF.
+     * Chemin par défaut vers le fichier décrivant un graphe RDF.
      */
     protected String filepath ;
 
@@ -23,7 +22,7 @@ public abstract class RDFFileIO implements RDFFileInputMethod {
     }
 
     /**
-     * Constructeur où le chemin vers le fichier RDF est initialisé.
+     * Constructeur avec initialisation du chemin vers le fichier RDF.
      * @param filepath Chemin vers le fichier RDF.
      */
     protected RDFFileIO(String filepath){
@@ -40,7 +39,7 @@ public abstract class RDFFileIO implements RDFFileInputMethod {
 
     /**
      * Determine la validité du chemin défini.
-     * <p> Cette méthode verifie le fichier indiqué par le chemin défini:
+     * <p> Cette méthode vérifie le fichier indiqué par le chemin défini:
      *     <li>existe.</li>
      *     <li>est un fichier.</li>
      *     <li>n'est pas un répertoire.</li>

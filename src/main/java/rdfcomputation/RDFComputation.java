@@ -1,9 +1,9 @@
 package rdfcomputation;
 
-import org.apache.jena.rdf.model.*;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
 import java.util.ArrayList;
 import java.util.HashMap;
-
 
 /**
  * RDFComputation est la classe qui généralise toutes les classes de traitement et calcul.
@@ -17,14 +17,9 @@ import java.util.HashMap;
  * <li>Ensemble des préfixes d'URI.</li>
  * </ul>
  * </p>
- * <p>
- * De plus, un Zéro a une liste d'amis Zéro. Le membre pourra ajouter ou enlever
- * des amis à cette liste.
- * </p>
  * @version 1.0.0
  */
 public class RDFComputation {
-    //RDF Graphs
     /**
      * Object Model du graphe 1.
      */
@@ -46,18 +41,19 @@ public class RDFComputation {
      */
     protected ArrayList<String> vars2; // should contain head variables of query2 but query2 is a graph
     /**
-     * Dictionaires des noeuds anonymes.
+     * Dictionnaire des noeuds anonymes.
      */
-    protected HashMap<String, String> blanknodes;
+    protected HashMap<String, String> blankNodes;
     /**
      * Dictionnaires des préfixes.
      */
-    protected HashMap<String, String> prefixs;
+    protected HashMap<String, String> prefixes;
 
 
     /**
-     * Constructeur par defaut.
-     * Elle initialise tous les attibuts et les graphes sont vides.
+     * Constructeur par défaut.
+     * Elle initialise tous les attributs et les graphes sont vides.
+     * @see rdf.RDFModelFactory
      */
     public RDFComputation() {
         query1 = ModelFactory.createDefaultModel();
@@ -65,122 +61,12 @@ public class RDFComputation {
         resultProd = null;
         vars1 = new ArrayList<>();
         vars2 = new ArrayList<>();
-        prefixs = new HashMap<>();
-        blanknodes = new HashMap<>();
+        prefixes = new HashMap<>();
+        blankNodes = new HashMap<>();
     }
 
     /**
-     * Constructeur avec des objets Model déjà initialisés.
-     * @param query1 Model du graphe 1.
-     * @param query2 Model du graphe 2.
-     */
-    public RDFComputation(Model query1, Model query2) {
-        this.query1 = query1;
-        this.query2 = query2;
-        resultProd = null;
-        vars1 = new ArrayList<>();
-        vars2 = new ArrayList<>();
-        prefixs = new HashMap<>();
-        blanknodes = new HashMap<>();
-        this.loadAttributes(3);
-
-    }
-
-
-    /**
-     * Charge les attributs liés au graphe indiqué.
-     * @param number Numéro du graphe dont les attributs sont chargés.
-     */
-    private void loadAttributes(int number) {
-        ArrayList<String> vars = null;
-        Model query = null;
-        switch (number) {
-            case 1:
-                vars = this.vars1;
-                query = query1;
-                break;
-            case 2:
-                vars = this.vars2;
-                query = this.query2;
-                break;
-            default:
-                this.loadAttributes(1);
-                this.loadAttributes(2);
-                break;
-        }
-        if (query != null) {
-            StmtIterator iter = query.listStatements();
-            while (iter.hasNext()) {
-                Statement stmt = iter.nextStatement();  // get next statement
-                Resource subject = stmt.getSubject();     // get the subject
-                Property predicate = stmt.getPredicate();   // get the predicate
-                RDFNode object = stmt.getObject();      // get the object
-
-                String ligne;
-                String objectType;
-                if (object instanceof Resource) {
-                    objectType = object.toString();
-                } else {
-                    // object is a literal
-                    objectType = " \"" + object.toString() + "\"";
-                }
-                ligne = String.format("<%s> <%s> %s",
-                        subject.toString(),
-                        predicate.toString(),
-                        objectType);
-
-                String[] spl = ligne.split(" ");
-                if (spl[0].equals("head")) {
-                    for (int i = 1; i < spl.length; ++i) {
-                        vars.add(spl[i].substring(2));
-                    }
-                } else if (spl[0].equals("@prefix")) {
-                    this.prefixs.put(spl[1].substring(0, spl[1].length() - 1), spl[2].substring(1, spl[2].length() - 1));
-                } else {
-                    if (spl[0].length() <= 1 || spl[1].length() <= 1 || spl[2].length() <= 1) {
-                        continue;
-                    }
-                    if (spl[0].charAt(0) == '_') {
-                        if (spl[1].charAt(0) == '_') {
-                            if (!this.blanknodes.containsKey(spl[0].substring(2))) {
-                                this.blanknodes.put(spl[0].substring(2), "y" + spl[0].substring(2));
-                            }
-                            if (spl[2].charAt(0) == '_') {
-                                if (!this.blanknodes.containsKey(spl[2].substring(2))) {
-                                    this.blanknodes.put(spl[2].substring(2), "y" + spl[2].substring(2));
-                                }
-                            } else if (spl[2].charAt(0) == '_') {
-                                if (!this.blanknodes.containsKey(spl[0].substring(2))) {
-                                    this.blanknodes.put(spl[0].substring(2), "y" + spl[0].substring(2));
-                                }
-                                if (!this.blanknodes.containsKey(spl[2].substring(2))) {
-                                    this.blanknodes.put(spl[2].substring(2), "y" + spl[2].substring(2));
-                                }
-                            } else {
-                                if (!this.blanknodes.containsKey(spl[0].substring(2))) {
-                                    this.blanknodes.put(spl[0].substring(2), "y" + spl[0].substring(2));
-                                }
-                            }
-                        } else if (spl[1].charAt(0) == '_') {
-                            if (spl[2].charAt(0) == '_') {
-                                if (!this.blanknodes.containsKey(spl[2].substring(2))) {
-                                    this.blanknodes.put(spl[2].substring(2), "v_" + spl[2].substring(2));
-                                }
-                            }
-                        } else if (spl[2].charAt(0) == '_') {
-                            if (!this.blanknodes.containsKey(spl[2].substring(2))) {
-                                this.blanknodes.put(spl[2].substring(2), "v_" + spl[2].substring(2));
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-    }
-
-    /**
-     * Determine si un URI est une entête de requête ou non.
+     * Determine si un URI n'est pas une entête de requête ou non.
      * @param s URI.
      * @return True si c'est une entête, False sinon.
      */
@@ -226,22 +112,28 @@ public class RDFComputation {
 
     /**
      * Retourne le dictionnaire des préfixes.
-     * @return Dictionaire des préfixes.
+     * @return Dictionnaire des préfixes.
+     * @see #prefixes
      */
-    public HashMap<String, String> getPrefixs() {
-        return prefixs;
+    public HashMap<String, String> getPrefixes() {
+        return prefixes;
     }
 
     /**
      * Retourne le dictionnaire des noeuds anonymes.
      * @return Dictionnaire des noeuds anonymes.
+     * @see #blankNodes
      */
-    public HashMap<String, String> getBlanknodes() {
-        return blanknodes;
+    public HashMap<String, String> getBlankNodes() {
+        return blankNodes;
     }
 
+    /**
+     * @return Renvoie le graphe contenant les résultats de traitement
+     * @see #resultProd
+     */
     public Model getResultProd(){ return resultProd; }
 
-    public void writelgg() {}
+    public void writeLGG() {}
 
 }

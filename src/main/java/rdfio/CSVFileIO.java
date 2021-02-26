@@ -2,19 +2,26 @@ package rdfio;
 
 import rdf.DictionaryNode;
 import tools.DefaultParameter;
-
-import java.io.*;
-import java.util.*;
-
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * CSVFileIO est la classe qui gère l'écriture et la lecture des fichiers csv.
- *
  * @see rdfio.RDFFileIO
  * @version 1.0.0
  */
 public class CSVFileIO extends RDFFileIO {
-
     /**
      * @see RDFFileIO#RDFFileIO()
      */
@@ -71,20 +78,20 @@ public class CSVFileIO extends RDFFileIO {
             return null ;
         }
         try {
-            InputStream ips = new FileInputStream(this.filepath);
-            InputStreamReader ipsr = new InputStreamReader(ips);
-            BufferedReader br = new BufferedReader(ipsr);
+            InputStream inputStream = new FileInputStream(this.filepath);
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
             Map<String,Integer> dictionaryBN = new HashMap<>() ;
             String line;
-            while ((line = br.readLine()) != null) {
-                final String[] splt = line.split("; ;");
-                if (splt.length == 2) {
-                    dictionaryBN.put(splt[0], Integer.parseInt(splt[1]));
+            while ((line = bufferedReader.readLine()) != null) {
+                final String[] str = line.split("; ;");
+                if (str.length == 2) {
+                    dictionaryBN.put(str[0], Integer.parseInt(str[1]));
                 }
             }
-            br.close();
-            ipsr.close();
-            ips.close();
+            bufferedReader.close();
+            inputStreamReader.close();
+            inputStream.close();
             return dictionaryBN ;
         }catch (IOException e){
             e.printStackTrace();
@@ -96,7 +103,6 @@ public class CSVFileIO extends RDFFileIO {
      * Sauvegarde les informations d'exécutions dans un fichier
      * @param size Taille du graphe obtenu après traitement.
      * @param timeProd Temps de traitement.
-     * @see rdfcomputation.RDFComputation
      */
     public void writeInfo(long size,long timeProd) {
         PrintStream l_out ;
@@ -112,7 +118,6 @@ public class CSVFileIO extends RDFFileIO {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-
     }
 
 

@@ -1,15 +1,18 @@
 package rdfcomputation;
 
-import org.apache.jena.rdf.model.*;
-import rdf.DictionaryNode;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.rdf.model.StmtIterator;
 import rdfio.SPARQLFileIO;
 import tools.DefaultParameter;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * LggQueries est la classe qui effectue le calcul de LGG sur les rêquetes.
- *
+ * LggQueries est la classe qui effectue le calcul de LGG de requêtes.
  * @see RDFComputation
  * @version 1.0.0
  */
@@ -22,17 +25,12 @@ public class LggQueries extends RDFComputation{
         super();
     }
 
-
     /**
-     * @see RDFComputation#RDFComputation(Model, Model)
+     * Détermine l'existence du "Least General Generalization" (LGG).
+     * @return Renvoie True si le LGG existe, False sinon.
      */
-    @SuppressWarnings("unused")
-    public LggQueries(Model query1, Model query2){
-        super(query1, query2);
-    }
-
-    public boolean lggexists() {
-        Map<String, String> e = new HashMap<String, String>();
+    public boolean lggExists() {
+        Map<String, String> e = new HashMap<>();
         System.out.print("heads anti-unification: ");
         for (int j=0; j<getVars1().size(); j++) {
             for (StmtIterator i = resultProd.listStatements(); i.hasNext(); ) {
@@ -46,29 +44,32 @@ public class LggQueries extends RDFComputation{
             }
         }
         System.out.println(e.toString());
-        if (e.containsValue("false"))
-            return false;
-        else
-            return true;
+        return !e.containsValue("false");
     }
 
-
-    public void writelgg() {
+    /**
+     * Exporte le "Least General Generalization" (LGG) sur un fichier.
+     */
+    public void writeLGG() {
         SPARQLFileIO sparqlFileIO = new SPARQLFileIO(this);
         sparqlFileIO.save(DefaultParameter.graphResult);
     }
 
 
+    /**
+     * Calcule le produit des deux graphes.
+     * @return produit des deux graphes.
+     */
     public Model product() {
         resultProd = ModelFactory.createDefaultModel();
-        String var1, var2, var3 = "";
+        String var1, var2, var3 ;
         for (StmtIterator i = query1.listStatements(); i.hasNext(); ) {
             Statement stmt1 = i.nextStatement();
             for (StmtIterator j = query2.listStatements(); j.hasNext(); ) {
                 Statement stmt2 = j.nextStatement();
-                if (stmt1.getSubject().equals(stmt2.getSubject()) && (!isVars(stmt1.getSubject().toString()))) {
-                    if (stmt1.getPredicate().equals(stmt2.getPredicate()) && (!isVars(stmt1.getPredicate().toString()))) {
-                        if (stmt1.getObject().equals(stmt2.getObject()) && (!isVars(stmt1.getObject().toString()))) {
+                if (stmt1.getSubject().equals(stmt2.getSubject()) && (isVars(stmt1.getSubject().toString()))) {
+                    if (stmt1.getPredicate().equals(stmt2.getPredicate()) && (isVars(stmt1.getPredicate().toString()))) {
+                        if (stmt1.getObject().equals(stmt2.getObject()) && (isVars(stmt1.getObject().toString()))) {
                             resultProd.add(stmt1);
                         }
                         else {
@@ -101,7 +102,7 @@ public class LggQueries extends RDFComputation{
                         }
                     }
                     else {
-                        if (stmt1.getObject().equals(stmt2.getObject()) && (!isVars(stmt1.getObject().toString()))) {
+                        if (stmt1.getObject().equals(stmt2.getObject()) && (isVars(stmt1.getObject().toString()))) {
                             if (stmt1.getPredicate().toString().contains("#")) {
                                 if (stmt2.getPredicate().toString().contains("#"))
                                     var2 = "v_"+stmt1.getPredicate().toString().split("#")[1]+"_"+stmt2.getPredicate().toString().split("#")[1];
@@ -174,8 +175,8 @@ public class LggQueries extends RDFComputation{
                     }
                 }
                 else {
-                    if (stmt1.getPredicate().equals(stmt2.getPredicate()) && (!isVars(stmt1.getPredicate().toString()))) {
-                        if (stmt1.getObject().equals(stmt2.getObject()) && (!isVars(stmt1.getObject().toString()))) {
+                    if (stmt1.getPredicate().equals(stmt2.getPredicate()) && (isVars(stmt1.getPredicate().toString()))) {
+                        if (stmt1.getObject().equals(stmt2.getObject()) && (isVars(stmt1.getObject().toString()))) {
                             if (stmt1.getSubject().toString().contains("#")) {
                                 if (stmt2.getSubject().toString().contains("#"))
                                     var1 = "v_"+stmt1.getSubject().toString().split("#")[1]+"_"+stmt2.getSubject().toString().split("#")[1];
@@ -236,7 +237,7 @@ public class LggQueries extends RDFComputation{
                         }
                     }
                     else {
-                        if (stmt1.getObject().equals(stmt2.getObject()) && (!isVars(stmt1.getObject().toString()))) {
+                        if (stmt1.getObject().equals(stmt2.getObject()) && (isVars(stmt1.getObject().toString()))) {
                             if (stmt1.getSubject().toString().contains("#")) {
                                 if (stmt2.getSubject().toString().contains("#"))
                                     var1 = "v_"+stmt1.getSubject().toString().split("#")[1]+"_"+stmt2.getSubject().toString().split("#")[1];
@@ -327,12 +328,16 @@ public class LggQueries extends RDFComputation{
             }
 
         }
-
         return resultProd;
     }
 
+    /**
+     * Determine si un URI est une entête de requête ou non.
+     * @param s URI.
+     * @return True si c'est une entête, False sinon.
+     */
     public boolean isVars(final String s) {
-        return s.charAt(0) == 'y' || s.charAt(0) == '?';
+        return s.charAt(0) != 'y' && s.charAt(0) != '?';
     }
 
 }

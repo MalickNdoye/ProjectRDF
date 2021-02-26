@@ -8,18 +8,17 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * DictinaryNode est la classe qui gère le dictionnaire de noeuds anonymes et URI.
+ * DictionaryNode est la classe qui gère le dictionnaire de nœuds anonymes et URI.
  * C'est une classe singleton.
- *
  * @version 1.0.0
  */
 public class DictionaryNode {
     /**
      * Chemin relatif ou absolu vers le fichier dictionnaire.
      */
-    private static String dictionaryPath = "unkown";
+    private static String dictionaryPath = "unknown";
     /**
-     * Collection qui indexe les URI et noeuds anonymes.
+     * Collection qui indexe les URI et nœuds anonymes.
      */
     private Map<String,Integer> dictionaryBN ;
 
@@ -36,10 +35,10 @@ public class DictionaryNode {
         dictionaryBN = csvIO.load();
     }
 
-    public int size() {
-        return dictionaryBN.size() ;
-    }
-
+    /**
+     * Configure le chemin vers le fichier du dictionnaire.
+     * @param dictionaryPath path of the dictionary
+     */
     public void setDictionaryPath(String dictionaryPath) {
         DictionaryNode.dictionaryPath = dictionaryPath ;
     }
@@ -48,7 +47,7 @@ public class DictionaryNode {
      *  Singleton Holder.
      */
     private static class DictionaryNodeHolder {
-        /** Instance unique non préinitialisée. */
+        /** Instance unique non pré-initialisée. */
         private final static DictionaryNode instance = new DictionaryNode();
     }
 
@@ -58,8 +57,8 @@ public class DictionaryNode {
     }
 
     /**
-     * Retourne l'index d'un URI ou noeud anonyme.
-     * @param uri désigne l'URI ou le noeud noeud anonyme.
+     * Retourne l'index d'un URI ou nœud anonyme.
+     * @param uri désigne l'URI ou le nœud anonyme.
      * @return Index de l'URI.
      */
     public Integer get(String uri) {
@@ -67,15 +66,15 @@ public class DictionaryNode {
     }
 
     /**
-     * Retourne l'ensemble des URI et noeuds anomymes.
-     * @return Ensemble d'URI et noeuds anonymes.
+     * Retourne l'ensemble des URI et nœuds anonymes.
+     * @return Ensemble d'URI et nœuds anonymes.
      */
     public Set<String> keySet() {
         return dictionaryBN.keySet();
     }
 
     /**
-     * Sauvegarde la collection dans le fichier de dictionaryPath.
+     * Sauvegarde la collection dans le fichier situé à dictionaryPath.
      */
     public void save() {
         CSVFileIO csvFileIO = new CSVFileIO();
@@ -85,7 +84,7 @@ public class DictionaryNode {
     /**
      * Retourne l'objet unique DictionaryNode.
      * @param filepath Chemin vers le fichier du dictionnaire.
-     * @return objet DictionnaryNode.
+     * @return objet DictionaryNode.
      */
     public static DictionaryNode getInstance(String filepath){
         DictionaryNode.dictionaryPath = filepath ;
@@ -101,9 +100,9 @@ public class DictionaryNode {
     }
 
     /**
-     * Met à jour le dictionaire en ajoutant l'URI ou le noeud anonyme s'il n'est pas
-     * encore présent dans le dictionaire.
-     * @param uri URI ou noeud anonyme.
+     * Met à jour le dictionnaire en ajoutant l'URI ou le nœud anonyme s'il n'est pas
+     * encore présent dans le dictionnaire.
+     * @param uri URI ou nœud anonyme.
      */
     public synchronized void update(String uri){
         if(dictionaryBN == null) dictionaryBN = new HashMap<>();

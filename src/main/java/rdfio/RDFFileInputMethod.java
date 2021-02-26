@@ -4,19 +4,15 @@ import java.util.Map;
 
 /**
  * RDFFileInputMethod est l'interface qui définit les méthodes communes de traitements de fichiers.
- *
  * @see rdfio.RDFFileIO
  * @version 1.0.0
  */
 public interface RDFFileInputMethod {
-    //LOADING METHOD
     /**
      * Retourne un dictionnaire des URIs et noeuds anonymes à partir d'un tableur.
      * @return Dictionnaire des URIs et noeuds anonymes.
      */
     Map<String, Integer> load();
-
-    //SAVING METHOD
 
     /**
      * Sauvegarde et écrit dans le fichier indiqué par le chemin défini.
