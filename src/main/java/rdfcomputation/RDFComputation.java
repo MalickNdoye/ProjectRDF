@@ -70,7 +70,7 @@ public class RDFComputation {
      * @param s URI.
      * @return True si c'est une entête, False sinon.
      */
-    public boolean isNotVars(String s) {
+    public Boolean isNotVars(String s) {
         return s.charAt(0) != 'y' && s.charAt(0) != '?';
     }
 

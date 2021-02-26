@@ -18,7 +18,7 @@ public abstract class RDFFileIO implements RDFFileInputMethod {
      * Constructeur par défaut.
      */
     protected RDFFileIO(){
-        this.filepath = "UNKOWN FILE" ;
+        this.filepath = "UNKNOWN FILE" ;
     }
 
     /**

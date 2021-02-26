@@ -314,11 +314,11 @@ public class MainLGG {
         System.out.println("Graphe RDF de "+ result.size()+" triplet(s) calculé en "+timeProd+"ms");
     }
 
-    private static boolean checkFile(String path) throws FileNotFoundException {
+    private static Boolean checkFile(String path) throws FileNotFoundException {
         return new File(path).isFile() ;
     }
 
-    private static boolean checkDirectory(String path) {
+    private static Boolean checkDirectory(String path) {
         return new File(path).isDirectory() ;
     }
 }

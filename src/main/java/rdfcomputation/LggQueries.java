@@ -29,7 +29,7 @@ public class LggQueries extends RDFComputation{
      * Détermine l'existence du "Least General Generalization" (LGG).
      * @return Renvoie True si le LGG existe, False sinon.
      */
-    public boolean lggExists() {
+    public Boolean lggExists() {
         Map<String, String> e = new HashMap<>();
         System.out.print("heads anti-unification: ");
         for (int j=0; j<getVars1().size(); j++) {
@@ -336,7 +336,7 @@ public class LggQueries extends RDFComputation{
      * @param s URI.
      * @return True si c'est une entête, False sinon.
      */
-    public boolean isVars(final String s) {
+    public Boolean isVars(final String s) {
         return s.charAt(0) != 'y' && s.charAt(0) != '?';
     }
 
