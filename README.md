@@ -57,6 +57,5 @@ $java -jar MainLGG [EXEC_MODE] -f pathToFile1 pathToFile2 -i pathToInfoFile -o p
 $java -jar MainLGG [EXEC_MODE] -f pathToFile1 pathToFile2
 
 $java -jar MainLGG --help
-
     
  
