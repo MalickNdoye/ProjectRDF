@@ -2,8 +2,7 @@ package tools;
 
 
 /**
- * DefaultParameter est la classe qui sont stockés les variables par défaut
- * et les constantes de l'application.
+ * DefaultParameter est la classe qui sont stockés les variables par défaut et les constantes de l'application.
  * @author tndoye
  * @version 1.0.0
  */
